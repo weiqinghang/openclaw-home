@@ -177,3 +177,13 @@ node /Users/claw/.openclaw/scripts/feishu_trade_bitable_upsert.js apply
 - 不要直接调用 `feishu_bitable_update_record` 或 `feishu_bitable_create_record` 跳过提案
 - 不要把报价态结果写回 SKU 库
 - 不要保留多余空 SKU 行
+
+## TODO
+
+1. 设计多维表格拆分策略
+- 目标：适配数十个供应商、几万个 SKU、单表容量受限的场景
+- 输出：分表规则、索引表、路由规则、跨表查询/写入策略
+
+2. 实现历史资料批量入库脚本
+- 来源：历史报价单、产品册、本地图册
+- 输出：批量抽取 SKU 主数据、写入对应飞书多维表格、同步本地图片素材目录
