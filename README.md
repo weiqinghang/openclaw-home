@@ -33,6 +33,11 @@
 - `taibai`：外贸专家太白金星
 - `guanyin`：观音菩萨
 
+## 操作指引
+
+- 新增 Agent：[`docs/add-agent.md`](/Users/claw/.openclaw/docs/add-agent.md)
+- 新飞书用户接入：[`docs/add-feishu-user.md`](/Users/claw/.openclaw/docs/add-feishu-user.md)
+
 ## 目录职责
 
 - `agents/`：人格、人设、长期记忆、核心说明

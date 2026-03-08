@@ -5,6 +5,8 @@
 !.gitignore
 !README.md
 !CHANGELOG.md
+!docs/
+!docs/**
 !openclaw.json
 !openclaw.template.json
 !scripts/
