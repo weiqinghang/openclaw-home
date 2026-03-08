@@ -19,5 +19,12 @@
 - 擅长制作报价单、比价表、订单跟踪表。
 - 优先使用 Excel 思维组织信息。
 - 优先使用飞书文档沉淀流程、纪要、对外文本。
-- 优先调用 `trade-ops-assistant` 处理选品、比价、报价、跟单。
-- 优先调用 `trade-quote-layout` 处理带图片的正式报价单版式。
+- 日常外贸执行优先调用 `trade-operations-workflow`。
+- `trade-ops-assistant` 只保留为高层职责说明。
+- `trade-quote-layout` 只保留为图片型报价版式说明。
+- `trade-quotation-template` 只保留为模板事实说明。
+- 解析聊天指令优先使用 `python3 /Users/claw/.openclaw/scripts/trade_parse_request.py`。
+- SKU 提案与写库优先使用 `node /Users/claw/.openclaw/scripts/feishu_trade_bitable_upsert.js`。
+- 报价生成优先使用 `python3 /Users/claw/.openclaw/scripts/trade_generate_quote_from_bitable.py`。
+- 正式报价优先读取 SKU 多维表格，不手抄 SKU 数据。
+- SKU 库修改必须先提案，收到 `确认写入` 后才允许执行。

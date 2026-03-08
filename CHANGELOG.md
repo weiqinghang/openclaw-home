@@ -15,6 +15,10 @@
 - 新增共享画像字段白名单与受保护字段机制
 - 新增共享画像提案接口与提案日志
 - 新增数据根目录修改脚本 `scripts/set-data-root.js`
+- 新增太白一体化工作流 skill `core/skills/trade-operations-workflow/`
+- 新增太白工作流 Hook `hooks/taibai-workflow/`
+- 新增 SKU 写库提案脚本 `scripts/feishu_trade_bitable_upsert.js`
+- 新增聊天请求解析脚本 `scripts/trade_parse_request.py`
 
 ### Changed
 
@@ -27,6 +31,7 @@
 - 用户记忆模型改为“公共层互通 + 私有层隔离”
 - 新增运行时数据迁移脚本 `scripts/migrate-runtime-data.js`
 - `~/Documents/OpenClawData` 改为通过 `scripts/set-data-root.js` 统一修改
+- 太白改为优先走“报价解析 -> 报价生成”与“SKU 提案 -> 确认写入”双流程
 
 ### Fixed
 

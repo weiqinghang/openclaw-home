@@ -175,6 +175,9 @@
         "boot-md": {
           "enabled": true
         },
+        "taibai-workflow": {
+          "enabled": true
+        },
         "user-permissions": {
           "enabled": true,
           "config": {

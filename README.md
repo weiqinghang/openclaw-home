@@ -8,6 +8,7 @@
 - Agent 独立人格、独立工作区、独立私有用户记忆
 - 同一用户在不同 Agent 间共享低敏稳定画像
 - 真实密钥脱离仓库管理
+- 太白已具备报价单生成与 SKU 库维护工作流骨架
 
 ## 当前结论
 
@@ -38,6 +39,20 @@
 - 新增 Agent：[`docs/add-agent.md`](docs/add-agent.md)
 - 新飞书用户接入：[`docs/add-feishu-user.md`](docs/add-feishu-user.md)
 - 外贸轻系统最小模型：[`docs/trade-data-model.md`](docs/trade-data-model.md)
+
+## 太白工作流
+
+- 总 skill：`core/skills/trade-operations-workflow/`
+- 解析请求：`scripts/trade_parse_request.py`
+- 生成报价：`scripts/trade_generate_quote_from_bitable.py`
+- SKU 提案/写入：`scripts/feishu_trade_bitable_upsert.js`
+- 运行时硬规则：`hooks/taibai-workflow/`
+
+当前规则：
+
+- 报价单必须先补齐客户名、SKU、数量
+- SKU 修改必须先提案，再等待 `确认写入`
+- `cbm`、`packages`、`totalGw`、`总价`、`总体积` 不写回 SKU 表
 
 ## 目录职责
 
