@@ -20,6 +20,8 @@ metadata:
 3. **角色模板**：用 `roleTemplates` 定义 admin/trusted/user/guest 等权限模板
 4. **权限检查**：对不同角色执行工具/路径限制
 5. **安全过滤**：支持全局、角色级、用户级三层敏感词拦截
+6. **共享画像层**：按 `channel:userId` 维护跨 Agent 公共画像
+7. **私有画像层**：按 `agentId + userId` 保持当前 Agent 的私有用户资料
 
 ## 事件
 
@@ -39,6 +41,11 @@ metadata:
           "config": {
             "defaultRole": "guest",
             "userDataDir": "~/.openclaw/users",
+            "sharedUserDataDir": "~/Documents/OpenClawData/shared-users",
+            "sharedProfile": {
+              "allowFields": ["displayName", "preferredName", "language", "timezone", "identityTags", "longTermPreferences", "stableGoals"],
+              "protectedFields": ["relationship", "identityAssessment", "riskLevel"]
+            },
             "roleTemplates": {
               "admin": {
                 "allowedTools": ["*"],
@@ -81,3 +88,4 @@ metadata:
 
 - 旧配置里的 `adminIds` 仍然有效，会自动映射成 admin 规则。
 - 未命中任何规则的用户会回退到 `defaultRole`，默认是 `user`。
+- 共享画像只同步白名单字段，不会读取其他 Agent 的私有目录。

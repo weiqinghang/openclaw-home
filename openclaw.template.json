@@ -166,7 +166,24 @@
           "config": {
             "defaultRole": "guest",
             "userDataDir": "/Users/yourname/Documents/OpenClawData/agents/{agentId}/users",
+            "sharedUserDataDir": "/Users/yourname/Documents/OpenClawData/shared-users",
             "logDir": "/Users/yourname/Documents/OpenClawData/agents/{agentId}/logs/security",
+            "sharedProfile": {
+              "allowFields": [
+                "displayName",
+                "preferredName",
+                "language",
+                "timezone",
+                "identityTags",
+                "longTermPreferences",
+                "stableGoals"
+              ],
+              "protectedFields": [
+                "relationship",
+                "identityAssessment",
+                "riskLevel"
+              ]
+            },
             "blockedPatterns": [],
             "roleTemplates": {
               "admin": {
@@ -228,23 +245,20 @@
       "userAllowlist": [
         "your-feishu-user-id"
       ],
-      "accounts": [
-        {
-          "id": "wukong",
+      "accounts": {
+        "wukong": {
           "appId": "your-feishu-app-id",
           "appSecret": "${FEISHU_WUKONG_APP_SECRET}"
         },
-        {
-          "id": "taibai",
+        "taibai": {
           "appId": "your-feishu-app-id",
           "appSecret": "${FEISHU_TAIBAI_APP_SECRET}"
         },
-        {
-          "id": "guanyin",
+        "guanyin": {
           "appId": "your-feishu-app-id",
           "appSecret": "${FEISHU_GUANYIN_APP_SECRET}"
         }
-      ]
+      }
     }
   }
 }

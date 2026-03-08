@@ -3,6 +3,8 @@
 
 # Keep git rules.
 !.gitignore
+!README.md
+!CHANGELOG.md
 !openclaw.json
 !openclaw.template.json
 !scripts/
@@ -79,3 +81,4 @@ subagents/
 update-check.json
 users/
 workspace
+.DS_Store

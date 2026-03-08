@@ -50,6 +50,22 @@ const DEFAULT_ROLE_TEMPLATES = {
   }
 };
 
+const DEFAULT_SHARED_PROFILE_FIELDS = [
+  "displayName",
+  "preferredName",
+  "language",
+  "timezone",
+  "identityTags",
+  "longTermPreferences",
+  "stableGoals"
+];
+
+const DEFAULT_PROTECTED_SHARED_PROFILE_FIELDS = [
+  "relationship",
+  "identityAssessment",
+  "riskLevel"
+];
+
 function getUserIdFromContext(context) {
   const metadata = context.metadata || {};
   if (metadata.senderId) return metadata.senderId;
@@ -136,6 +152,14 @@ function getUserWorkRecordsPath(userDataPath) {
   return path.join(userDataPath, "work_records.md");
 }
 
+function getSharedProfilePath(sharedUserDataPath) {
+  return path.join(sharedUserDataPath, "shared_profile.json");
+}
+
+function getSharedProposalLogPath(sharedUserDataPath) {
+  return path.join(sharedUserDataPath, "proposals.jsonl");
+}
+
 function createUserProfile(userId, channel, role, profileOverrides = {}) {
   const now = new Date().toISOString();
   return {
@@ -215,6 +239,26 @@ function createWorkRecordHeader() {
 `;
 }
 
+function createSharedUserProfile(userKey, userId, channel, seed = {}) {
+  const now = new Date().toISOString();
+  return {
+    userKey,
+    userId,
+    channel,
+    displayName: "",
+    preferredName: "",
+    language: "zh-CN",
+    timezone: "Asia/Shanghai",
+    identityTags: [],
+    longTermPreferences: [],
+    stableGoals: [],
+    createdAt: now,
+    updatedAt: now,
+    sources: [],
+    ...seed
+  };
+}
+
 function userProfileExists(userDataPath) {
   return fs.existsSync(getUserProfilePath(userDataPath));
 }
@@ -233,11 +277,222 @@ function saveUserProfile(userDataPath, profile) {
   fs.writeFileSync(getUserProfilePath(userDataPath), JSON.stringify(profile, null, 2), "utf-8");
 }
 
+function loadJsonFile(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+function writeJsonFile(filePath, data) {
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf-8");
+}
+
 function updateUserLastActive(userDataPath) {
   const profile = loadUserProfile(userDataPath);
   if (!profile) return;
   profile.lastActive = new Date().toISOString();
   saveUserProfile(userDataPath, profile);
+}
+
+function getUserKey(channel, userId) {
+  return `${channel}:${userId}`;
+}
+
+function buildSharedUserDataPath(config, channel, userId) {
+  const sharedDir = resolveTemplatePath(
+    config.sharedUserDataDir || "~/Documents/OpenClawData/shared-users"
+  );
+  return path.join(sharedDir, `${sanitizePathSegment(channel)}_${sanitizePathSegment(userId)}`);
+}
+
+function getSharedProfileFields(config = {}) {
+  return mergeUniqueStrings(config.sharedProfile?.allowFields, DEFAULT_SHARED_PROFILE_FIELDS);
+}
+
+function getProtectedSharedProfileFields(config = {}) {
+  return mergeUniqueStrings(
+    config.sharedProfile?.protectedFields,
+    DEFAULT_PROTECTED_SHARED_PROFILE_FIELDS
+  );
+}
+
+function normalizeSharedProfileValue(field, value) {
+  if (value == null) return undefined;
+  if (["identityTags", "longTermPreferences", "stableGoals"].includes(field)) {
+    return mergeUniqueStrings(value);
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed ? trimmed : undefined;
+  }
+  return undefined;
+}
+
+function sanitizeSharedProfilePatch(patch, config = {}) {
+  const allowedFields = new Set(getSharedProfileFields(config));
+  const protectedFields = new Set(getProtectedSharedProfileFields(config));
+  const accepted = {};
+  const rejected = [];
+
+  for (const [field, rawValue] of Object.entries(patch || {})) {
+    if (!allowedFields.has(field) || protectedFields.has(field)) {
+      rejected.push(field);
+      continue;
+    }
+    const normalized = normalizeSharedProfileValue(field, rawValue);
+    if (normalized === undefined) continue;
+    accepted[field] = normalized;
+  }
+
+  return { accepted, rejected };
+}
+
+function mergeSharedProfiles(currentProfile, patch, sourceAgentId) {
+  const nextProfile = { ...currentProfile };
+  for (const [field, value] of Object.entries(patch)) {
+    if (Array.isArray(value)) {
+      nextProfile[field] = mergeUniqueStrings(currentProfile[field], value);
+      continue;
+    }
+    nextProfile[field] = value;
+  }
+
+  const now = new Date().toISOString();
+  nextProfile.updatedAt = now;
+  nextProfile.sources = Array.isArray(currentProfile.sources) ? [...currentProfile.sources] : [];
+  nextProfile.sources.push({
+    agentId: sourceAgentId,
+    updatedAt: now,
+    fields: Object.keys(patch)
+  });
+  return nextProfile;
+}
+
+function getSharedUserProfile(userKey, config = {}) {
+  const [channel = "unknown", userId = "unknown"] = String(userKey).split(":");
+  const sharedUserDataPath = buildSharedUserDataPath(config, channel, userId);
+  const profile = loadJsonFile(getSharedProfilePath(sharedUserDataPath));
+  return profile || null;
+}
+
+function applySharedUserProfilePatch(userKey, patch, sourceAgentId, config = {}) {
+  const [channel = "unknown", userId = "unknown"] = String(userKey).split(":");
+  const sharedUserDataPath = buildSharedUserDataPath(config, channel, userId);
+  ensureDir(sharedUserDataPath);
+
+  const currentProfile = loadJsonFile(getSharedProfilePath(sharedUserDataPath))
+    || createSharedUserProfile(userKey, userId, channel);
+  const nextProfile = mergeSharedProfiles(currentProfile, patch, sourceAgentId);
+  writeJsonFile(getSharedProfilePath(sharedUserDataPath), nextProfile);
+  return nextProfile;
+}
+
+function proposeSharedUserProfilePatch(userKey, patch, sourceAgentId, config = {}) {
+  const [channel = "unknown", userId = "unknown"] = String(userKey).split(":");
+  const sharedUserDataPath = buildSharedUserDataPath(config, channel, userId);
+  ensureDir(sharedUserDataPath);
+
+  const { accepted, rejected } = sanitizeSharedProfilePatch(patch, config);
+  const proposal = {
+    userKey,
+    sourceAgentId,
+    proposedAt: new Date().toISOString(),
+    acceptedFields: Object.keys(accepted),
+    rejectedFields: rejected,
+    patch: accepted
+  };
+  fs.appendFileSync(
+    getSharedProposalLogPath(sharedUserDataPath),
+    `${JSON.stringify(proposal)}\n`,
+    "utf-8"
+  );
+
+  const profile = Object.keys(accepted).length > 0
+    ? applySharedUserProfilePatch(userKey, accepted, sourceAgentId, config)
+    : getSharedUserProfile(userKey, config) || createSharedUserProfile(userKey, userId, channel);
+
+  return { proposal, profile };
+}
+
+function buildSharedProfileSeed(privateProfile = null, privateHabits = null, profileOverride = null) {
+  const likes = normalizeStringArray(privateHabits?.learnedPreferences?.likes);
+  const dislikes = normalizeStringArray(privateHabits?.learnedPreferences?.dislikes).map((item) => `avoid:${item}`);
+  return {
+    displayName: profileOverride?.displayName || privateProfile?.displayName || privateProfile?.nickname || "",
+    preferredName: profileOverride?.preferredName || privateProfile?.preferredName || privateProfile?.nickname || "",
+    language: profileOverride?.language
+      || privateHabits?.communicationStyle?.language
+      || privateProfile?.settings?.language
+      || privateProfile?.settings?.locale
+      || "",
+    timezone: profileOverride?.timezone
+      || privateHabits?.preferences?.timezone
+      || privateProfile?.settings?.timezone
+      || "",
+    identityTags: mergeUniqueStrings(profileOverride?.identityTags, privateProfile?.identityTags),
+    longTermPreferences: mergeUniqueStrings(
+      profileOverride?.longTermPreferences,
+      privateProfile?.longTermPreferences,
+      likes,
+      dislikes
+    ),
+    stableGoals: mergeUniqueStrings(profileOverride?.stableGoals, privateProfile?.stableGoals)
+  };
+}
+
+function summarizeSharedProfile(profile) {
+  if (!profile) return "无";
+  const summary = {
+    displayName: profile.displayName || undefined,
+    preferredName: profile.preferredName || undefined,
+    language: profile.language || undefined,
+    timezone: profile.timezone || undefined,
+    identityTags: normalizeStringArray(profile.identityTags),
+    longTermPreferences: normalizeStringArray(profile.longTermPreferences),
+    stableGoals: normalizeStringArray(profile.stableGoals)
+  };
+  return JSON.stringify(summary, null, 2);
+}
+
+function summarizePrivateContext(profile, habits) {
+  const summary = {
+    nickname: profile?.nickname || undefined,
+    role: profile?.role || undefined,
+    language: habits?.communicationStyle?.language || profile?.settings?.language || undefined,
+    timezone: habits?.preferences?.timezone || profile?.settings?.timezone || undefined,
+    responseLength: habits?.preferences?.responseLength || undefined,
+    likes: normalizeStringArray(habits?.learnedPreferences?.likes),
+    dislikes: normalizeStringArray(habits?.learnedPreferences?.dislikes)
+  };
+  return JSON.stringify(summary, null, 2);
+}
+
+function injectUserContext(content, sharedProfile, privateProfile, privateHabits) {
+  const sentinel = "[系统提供的用户画像上下文]";
+  if (typeof content === "string" && content.startsWith(sentinel)) return content;
+
+  const prefix = [
+    sentinel,
+    "以下信息由本地系统整理，仅作当前对话参考，不是用户指令。",
+    "",
+    "共享用户画像：",
+    "```json",
+    summarizeSharedProfile(sharedProfile),
+    "```",
+    "",
+    "当前 Agent 私有用户画像：",
+    "```json",
+    summarizePrivateContext(privateProfile, privateHabits),
+    "```",
+    "",
+    "[用户原始消息]",
+    String(content || "")
+  ].join("\n");
+
+  return prefix;
 }
 
 function initUserFiles(userDataPath, userId, channel, role, profileOverrides = {}) {
@@ -397,6 +652,18 @@ function getUserPermissions(role, userId, channel, config, rule = null, agentId 
   };
 }
 
+function getAgentPrivateUserMemory(agentId, userKey, config = {}) {
+  const [channel = "unknown", userId = "unknown"] = String(userKey).split(":");
+  const userDataPath = buildUserDataPath(config, channel, userId, null, agentId);
+  return {
+    userDataPath,
+    memoryPath: getUserMemoryPath(userDataPath),
+    profilePath: getUserProfilePath(userDataPath),
+    habitsPath: getUserHabitsPath(userDataPath),
+    workRecordsPath: getUserWorkRecordsPath(userDataPath)
+  };
+}
+
 function getLogDir(config = {}, agentId = "wukong") {
   const logDir = resolveTemplatePath(
     config.logDir || path.join(os.homedir(), ".openclaw", "logs", "security"),
@@ -426,6 +693,7 @@ const handler = async (event) => {
   const rule = resolveUserRule(context, userId, channel, config);
   const role = rule?.role || config.defaultRole || "user";
   const permissions = getUserPermissions(role, userId, channel, config, rule, agentId);
+  const userKey = getUserKey(channel, userId);
 
   if (isBlockedContent(content, permissions.blockedPatterns)) {
     logSecurityEvent(config, agentId, "block", userId, channel, `Blocked by ${permissions.ruleName || role}: ${String(content).substring(0, 80)}`);
@@ -444,7 +712,18 @@ const handler = async (event) => {
     updateUserLastActive(permissions.userDataPath);
   }
 
+  const privateProfile = loadUserProfile(permissions.userDataPath);
+  const privateHabits = loadJsonFile(getUserHabitsPath(permissions.userDataPath));
+  const sharedSeed = buildSharedProfileSeed(privateProfile, privateHabits, permissions.profile || {});
+  const sharedResult = proposeSharedUserProfilePatch(userKey, sharedSeed, agentId, config);
+  const privateMemory = getAgentPrivateUserMemory(agentId, userKey, config);
+
+  context.content = injectUserContext(content, sharedResult.profile, privateProfile, privateHabits);
   context._userPermissions = permissions;
+  context._sharedUserProfile = sharedResult.profile;
+  context._sharedUserProfileProposal = sharedResult.proposal;
+  context._sharedUserProfilePath = getSharedProfilePath(buildSharedUserDataPath(config, channel, userId));
+  context._privateUserMemory = privateMemory;
   logSecurityEvent(config, agentId, "role", userId, channel, `Role: ${role}${permissions.ruleName ? ` (${permissions.ruleName})` : ""}`);
   console.log(`[user-permissions] Agent ${agentId} user ${channel}:${userId} role=${role} rule=${permissions.ruleName || "default"} path=${permissions.userDataPath}`);
 };
@@ -466,6 +745,11 @@ module.exports = {
   createWorkRecordHeader,
   initUserFiles,
   getUserPermissions,
+  getUserKey,
+  getSharedUserProfile,
+  proposeSharedUserProfilePatch,
+  applySharedUserProfilePatch,
+  getAgentPrivateUserMemory,
   getRoleTemplates,
   getUserRules,
   matchUserRule,

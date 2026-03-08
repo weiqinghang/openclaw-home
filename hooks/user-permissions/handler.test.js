@@ -25,6 +25,7 @@ function assertEqual(actual, expected, message) {
 
 const baseConfig = {
   userDataDir: testDir,
+  sharedUserDataDir: path.join(testDir, "shared-users"),
   defaultRole: "guest",
   blockedPatterns: ["全局敏感词"],
   roleTemplates: {
@@ -115,6 +116,55 @@ test("getUserPermissions - custom allowedDir also sets userDataPath", () => {
   assertEqual(permissions.userDataPath, path.join(testDir, "custom-vip-home"), "userDataPath should follow custom path");
 });
 
+test("shared profile proposal - applies safe fields and rejects protected fields", () => {
+  const result = hook.proposeSharedUserProfilePatch(
+    "feishu:alice",
+    {
+      displayName: "Alice",
+      language: "zh-CN",
+      identityTags: ["vip"],
+      relationship: "friend"
+    },
+    "taibai",
+    baseConfig
+  );
+
+  assertEqual(result.profile.displayName, "Alice", "displayName should be applied");
+  assertEqual(result.profile.language, "zh-CN", "language should be applied");
+  assert(result.profile.identityTags.includes("vip"), "identityTags should merge");
+  assert(result.proposal.rejectedFields.includes("relationship"), "protected field should be rejected");
+});
+
+test("applySharedUserProfilePatch - merges arrays across agents", () => {
+  hook.applySharedUserProfilePatch(
+    "feishu:alice",
+    { longTermPreferences: ["pref-a"], stableGoals: ["goal-a"] },
+    "wukong",
+    baseConfig
+  );
+  const merged = hook.applySharedUserProfilePatch(
+    "feishu:alice",
+    { longTermPreferences: ["pref-b"], stableGoals: ["goal-a", "goal-b"] },
+    "guanyin",
+    baseConfig
+  );
+
+  assert(merged.longTermPreferences.includes("pref-a"), "Existing array entries should remain");
+  assert(merged.longTermPreferences.includes("pref-b"), "New array entries should be appended");
+  assert(merged.stableGoals.includes("goal-b"), "Goals should union");
+});
+
+test("getAgentPrivateUserMemory - stays scoped to current agent", () => {
+  const taibaiMemory = hook.getAgentPrivateUserMemory("taibai", "feishu:alice", baseConfig);
+  const guanyinMemory = hook.getAgentPrivateUserMemory("guanyin", "feishu:alice", baseConfig);
+  assert(taibaiMemory.userDataPath.includes("taibai") === false, "Private user path should use configured userDataDir");
+  assertEqual(
+    taibaiMemory.userDataPath,
+    guanyinMemory.userDataPath,
+    "User data root is per user directory under configured root"
+  );
+});
+
 test("initUserFiles - initializes full structure", () => {
   const userDir = path.join(testDir, "new-user");
   hook.initUserFiles(userDir, "new-user", "webchat", "user", { nickname: "Alice" });
@@ -153,6 +203,8 @@ test("handler - injects permissions for matched rule", async () => {
   assertEqual(event.context._userPermissions.role, "trusted", "Matched user should get trusted role");
   assertEqual(event.context._userPermissions.ruleName, "ops", "Matched rule name should be injected");
   assert(fs.existsSync(event.context._userPermissions.userDataPath), "User directory should be created");
+  assert(event.context._sharedUserProfile, "Shared profile should be injected");
+  assert(String(event.context.content).includes("共享用户画像"), "Content should include shared user context");
 });
 
 test("handler - blocks content using merged patterns", async () => {
@@ -181,6 +233,40 @@ test("handler - blocks content using merged patterns", async () => {
   await hook.default(event);
   assertEqual(event.messages.length, 1, "Blocked message should append denial message");
   assert(!event.context._userPermissions, "Blocked message should stop before permission injection");
+});
+
+test("handler - keeps agent private and shared profile separate", async () => {
+  const taibaiEvent = {
+    type: "message",
+    action: "received",
+    messages: [],
+    context: {
+      content: "你好",
+      channelId: "feishu",
+      metadata: { senderId: "shared_user" }
+    },
+    agentId: "taibai",
+    cfg: {
+      hooks: {
+        internal: {
+          entries: {
+            "user-permissions": {
+              config: baseConfig
+            }
+          }
+        }
+      }
+    }
+  };
+
+  await hook.default(taibaiEvent);
+  const sharedProfile = hook.getSharedUserProfile("feishu:shared_user", baseConfig);
+  assert(sharedProfile, "Shared profile should exist after handling a message");
+  assertEqual(
+    taibaiEvent.context._privateUserMemory.userDataPath,
+    path.join(testDir, "feishu_shared_user"),
+    "Private path should remain per-user storage"
+  );
 });
 
 (async () => {
