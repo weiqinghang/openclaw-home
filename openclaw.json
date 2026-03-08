@@ -72,10 +72,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "openai-codex/gpt-5.3-codex",
-        "fallbacks": [
-          "minimax-cn/MiniMax-M2.5"
-        ]
+        "primary": "openai-codex/gpt-5.3-codex"
       },
       "models": {
         "minimax-cn/MiniMax-M2.5": {
@@ -110,9 +107,9 @@
         "workspace": "/Users/claw/Documents/OpenClawData/agents/taibai/workspace"
       },
       {
-        "id": "puti",
-        "agentDir": "/Users/claw/.openclaw/agents/puti/agent",
-        "workspace": "/Users/claw/Documents/OpenClawData/agents/puti/workspace"
+        "id": "guanyin",
+        "agentDir": "/Users/claw/.openclaw/agents/guanyin/agent",
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/guanyin/workspace"
       }
     ]
   },
@@ -142,10 +139,10 @@
       }
     },
     {
-      "agentId": "puti",
+      "agentId": "guanyin",
       "match": {
         "channel": "feishu",
-        "accountId": "puti"
+        "accountId": "guanyin"
       }
     }
   ],
@@ -264,29 +261,17 @@
         {
           "id": "wukong",
           "appId": "cli_a915a84b1db8dbd6",
-          "appSecret": {
-            "source": "file",
-            "provider": "localfile",
-            "id": "/channels/feishu/accounts/wukong/appSecret"
-          }
+          "appSecret": "${FEISHU_WUKONG_APP_SECRET}"
         },
         {
           "id": "taibai",
           "appId": "cli_a92b7fe2b3b8dcd5",
-          "appSecret": {
-            "source": "file",
-            "provider": "localfile",
-            "id": "/channels/feishu/accounts/taibai/appSecret"
-          }
+          "appSecret": "${FEISHU_TAIBAI_APP_SECRET}"
         },
         {
-          "id": "puti",
+          "id": "guanyin",
           "appId": "cli_a92b7aa561b8dcd1",
-          "appSecret": {
-            "source": "file",
-            "provider": "localfile",
-            "id": "/channels/feishu/accounts/puti/appSecret"
-          }
+          "appSecret": "${FEISHU_GUANYIN_APP_SECRET}"
         }
       ]
     }
@@ -317,15 +302,6 @@
   "skills": {
     "install": {
       "nodeManager": "npm"
-    },
-    "entries": {
-      "mcporter": {
-        "enabled": true,
-        "env": {
-          "MINIMAX_API_KEY": "${MINIMAX_API_KEY}",
-          "MINIMAX_API_HOST": "https://api.minimaxi.com"
-        }
-      }
     }
   },
   "plugins": {

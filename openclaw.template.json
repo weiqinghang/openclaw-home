@@ -103,9 +103,9 @@
         "workspace": "/Users/yourname/Documents/OpenClawData/agents/taibai/workspace"
       },
       {
-        "id": "puti",
-        "agentDir": "/Users/yourname/.openclaw/agents/puti/agent",
-        "workspace": "/Users/yourname/Documents/OpenClawData/agents/puti/workspace"
+        "id": "guanyin",
+        "agentDir": "/Users/yourname/.openclaw/agents/guanyin/agent",
+        "workspace": "/Users/yourname/Documents/OpenClawData/agents/guanyin/workspace"
       }
     ]
   },
@@ -125,10 +125,10 @@
       }
     },
     {
-      "agentId": "puti",
+      "agentId": "guanyin",
       "match": {
         "channel": "feishu",
-        "accountId": "puti"
+        "accountId": "guanyin"
       }
     }
   ],
@@ -232,29 +232,17 @@
         {
           "id": "wukong",
           "appId": "your-feishu-app-id",
-          "appSecret": {
-            "source": "file",
-            "provider": "localfile",
-            "id": "/channels/feishu/accounts/wukong/appSecret"
-          }
+          "appSecret": "${FEISHU_WUKONG_APP_SECRET}"
         },
         {
           "id": "taibai",
           "appId": "your-feishu-app-id",
-          "appSecret": {
-            "source": "file",
-            "provider": "localfile",
-            "id": "/channels/feishu/accounts/taibai/appSecret"
-          }
+          "appSecret": "${FEISHU_TAIBAI_APP_SECRET}"
         },
         {
-          "id": "puti",
+          "id": "guanyin",
           "appId": "your-feishu-app-id",
-          "appSecret": {
-            "source": "file",
-            "provider": "localfile",
-            "id": "/channels/feishu/accounts/puti/appSecret"
-          }
+          "appSecret": "${FEISHU_GUANYIN_APP_SECRET}"
         }
       ]
     }

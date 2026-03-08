@@ -19,9 +19,9 @@ agents/wukong/agent/
 !agents/taibai/
 !agents/taibai/*.md
 agents/taibai/agent/
-!agents/puti/
-!agents/puti/*.md
-agents/puti/agent/
+!agents/guanyin/
+!agents/guanyin/*.md
+agents/guanyin/agent/
 agents/main/
 
 # Keep shared skills and extensions source.
