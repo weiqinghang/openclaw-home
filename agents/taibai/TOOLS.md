@@ -26,5 +26,6 @@
 - 解析聊天指令优先使用 `python3 /Users/claw/.openclaw/scripts/trade_parse_request.py`。
 - SKU 提案与写库优先使用 `node /Users/claw/.openclaw/scripts/feishu_trade_bitable_upsert.js`。
 - 报价生成优先使用 `python3 /Users/claw/.openclaw/scripts/trade_generate_quote_from_bitable.py`。
+- 报价文件发送优先使用 `node /Users/claw/.openclaw/scripts/feishu_trade_send_file.js`。
 - 正式报价优先读取 SKU 多维表格，不手抄 SKU 数据。
 - SKU 库修改必须先提案，收到 `确认写入` 后才允许执行。

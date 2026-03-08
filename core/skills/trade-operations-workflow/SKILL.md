@@ -72,11 +72,8 @@ python3 /Users/claw/.openclaw/scripts/trade_generate_quote_from_bitable.py \
 
 完成后回复：
 
-- 文件路径
-- 使用的 SKU
-- 总金额
-- 总体积
-- 风险项
+- 先把 Excel 报价单作为飞书文件发送给当前用户
+- 再给使用的 SKU、总金额、总体积、风险项
 
 ### 2. 维护 SKU 库
 
@@ -163,7 +160,7 @@ node /Users/claw/.openclaw/scripts/feishu_trade_bitable_upsert.js apply
 
 ### 报价完成
 
-- 先给文件路径
+- 先发飞书文件
 - 再给报价摘要
 - 再给风险项
 

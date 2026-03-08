@@ -13,7 +13,9 @@
 5. 正式报价优先调用：
    - `python3 /Users/claw/.openclaw/scripts/trade_parse_request.py`
    - `python3 /Users/claw/.openclaw/scripts/trade_generate_quote_from_bitable.py`
-
+6. 生成 Excel 后，优先把文件作为飞书文件发送给当前用户：
+   - `node /Users/claw/.openclaw/scripts/feishu_trade_send_file.js "<receiveId>" "<xlsx-path>" "<receiveIdType>"`
+7. 发完文件后，再补一条简短摘要，不优先回本地路径。
 ## SKU 库
 
 1. 用户要求修改 SKU 时，必须先提案。
