@@ -37,6 +37,7 @@
 
 - 新增 Agent：[`docs/add-agent.md`](docs/add-agent.md)
 - 新飞书用户接入：[`docs/add-feishu-user.md`](docs/add-feishu-user.md)
+- 外贸轻系统最小模型：[`docs/trade-data-model.md`](docs/trade-data-model.md)
 
 ## 目录职责
 

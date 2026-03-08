@@ -9,6 +9,7 @@
 - 新增仓库级 `CHANGELOG.md`
 - 新增新增 Agent 指引 `docs/add-agent.md`
 - 新增飞书用户接入指引 `docs/add-feishu-user.md`
+- 新增外贸轻系统最小模型 `docs/trade-data-model.md`
 - 新增本地 secrets 启动脚本 `scripts/with-openclaw-secrets.sh`
 - 新增跨 Agent 公共用户画像层
 - 新增共享画像字段白名单与受保护字段机制
