@@ -35,8 +35,8 @@
 
 ## 操作指引
 
-- 新增 Agent：[`docs/add-agent.md`](/Users/claw/.openclaw/docs/add-agent.md)
-- 新飞书用户接入：[`docs/add-feishu-user.md`](/Users/claw/.openclaw/docs/add-feishu-user.md)
+- 新增 Agent：[`docs/add-agent.md`](docs/add-agent.md)
+- 新飞书用户接入：[`docs/add-feishu-user.md`](docs/add-feishu-user.md)
 
 ## 目录职责
 
