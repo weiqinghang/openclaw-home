@@ -21,6 +21,7 @@
 - `openclaw.json` 改为入库管理，真实密钥不再明文入库
 - `user-permissions` Hook 改为支持按 `{agentId}` 分流用户数据
 - 用户记忆模型改为“公共层互通 + 私有层隔离”
+- 新增运行时数据迁移脚本 `scripts/migrate-runtime-data.js`
 
 ### Fixed
 
@@ -28,6 +29,7 @@
 - 修复 `guanyin` 外置工作区缺失核心文件链接导致的消息分发失败
 - 修复 `wukong`、`taibai`、`guanyin` 的 pairing 与多 App 接入链路
 - 修复部分 owner/user 规则匹配问题
+- 迁移旧 `~/.openclaw/users` 用户目录到外部 Agent 用户目录，并生成共享画像目录
 
 ### Security
 
