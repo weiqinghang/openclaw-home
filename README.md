@@ -9,6 +9,24 @@
 - 同一用户在不同 Agent 间共享低敏稳定画像
 - 真实密钥脱离仓库管理
 
+## 当前结论
+
+截至目前，**多 Agent + 多用户的基础架构已经基本成熟**。
+
+已确认跑通：
+
+- 多 Agent 路由
+- 多飞书 App 独立接入
+- 多用户 pairing 与独立会话
+- Agent 私有用户记忆隔离
+- 跨 Agent 低敏公共用户画像共享
+- 运行态目录外置
+
+仍待继续打磨：
+
+- 3 个 Agent 的能力与人格差异化还不够明显
+- `openclaw gateway status/health` 仍可能出现 CLI 探针误报
+
 ## 当前 Agent
 
 - `wukong`：万能管家悟空
@@ -37,6 +55,38 @@
 - `agents/{agentId}/logs`
 - `shared-users`
 
+## 架构摘要
+
+### 多 Agent 架构
+
+- **入口层**：1 个飞书 App 对应 1 个 `accountId`
+- **路由层**：`accountId -> agentId`
+- **Agent 层**：每个 Agent 拥有独立人格、人设、长期记忆、workspace、sessions、users、logs
+
+当前映射：
+
+- `wukong` -> 万能管家悟空
+- `taibai` -> 外贸专家太白金星
+- `guanyin` -> 观音菩萨
+
+当前判断：
+
+- 多 App 进多 Agent 的链路已稳定
+- 3 个 Agent 已能分别独立收发消息
+
+### 多用户架构
+
+- **用户主键**：`channel:userId`
+- **私有层**：每个 Agent 对每个用户维护独立目录
+- **公共层**：同一用户在不同 Agent 间共享低敏稳定画像
+
+当前行为：
+
+- 同一用户在不同 Agent 下是“同一个人”
+- 不同用户在同一 Agent 下互相隔离
+- 不同 Agent 不读取彼此私有会话和工作文件
+- 公共层只共享稳定画像，不共享聊天细节
+
 ## 用户记忆模型
 
 - **公共层**：按 `channel:userId` 维护共享用户画像
@@ -57,6 +107,12 @@
 - 会话摘要
 - 工作文件
 - 其他 Agent 私有记忆
+
+### 当前落盘位置
+
+- 私有用户资料：`~/Documents/OpenClawData/agents/{agentId}/users/...`
+- 共享用户画像：`~/Documents/OpenClawData/shared-users/...`
+- 安全日志：`~/Documents/OpenClawData/agents/{agentId}/logs/security/...`
 
 ## 密钥管理
 

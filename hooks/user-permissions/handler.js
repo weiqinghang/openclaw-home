@@ -4,6 +4,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
 
+const OPENCLAW_CONFIG_PATH = path.join(os.homedir(), ".openclaw", "openclaw.json");
+
 const DEFAULT_BLOCKED_PATTERNS = [
   "管理员", "admin", "权限", "permission", "让我成为", "把我设为",
   "修改配置", "修改权限", "改我为", "add user", "remove user",
@@ -524,10 +526,36 @@ function mergeUniqueStrings(...values) {
   return [...new Set(values.flatMap(normalizeStringArray))];
 }
 
+function loadOpenClawConfigFromDisk() {
+  return loadJsonFile(OPENCLAW_CONFIG_PATH) || {};
+}
+
+function getDiskHookConfig() {
+  const config = loadOpenClawConfigFromDisk();
+  return config?.hooks?.internal?.entries?.["user-permissions"]?.config
+    || config?.hooks?.internal?.entries?.userPermissions?.config
+    || {};
+}
+
 function getConfig(event) {
-  return event.cfg?.hooks?.internal?.entries?.["user-permissions"]?.config
+  const runtimeConfig = event.cfg?.hooks?.internal?.entries?.["user-permissions"]?.config
     || event.cfg?.hooks?.internal?.entries?.userPermissions?.config
     || {};
+  const diskConfig = getDiskHookConfig();
+
+  return {
+    ...diskConfig,
+    ...runtimeConfig,
+    roleTemplates: {
+      ...(diskConfig.roleTemplates || {}),
+      ...(runtimeConfig.roleTemplates || {})
+    },
+    sharedProfile: {
+      ...(diskConfig.sharedProfile || {}),
+      ...(runtimeConfig.sharedProfile || {})
+    },
+    userRules: Array.isArray(runtimeConfig.userRules) ? runtimeConfig.userRules : diskConfig.userRules
+  };
 }
 
 function getRoleTemplates(config) {
@@ -744,6 +772,7 @@ module.exports = {
   createUserMemory,
   createWorkRecordHeader,
   initUserFiles,
+  getConfig,
   getUserPermissions,
   getUserKey,
   getSharedUserProfile,

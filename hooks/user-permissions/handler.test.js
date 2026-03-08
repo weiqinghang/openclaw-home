@@ -26,6 +26,7 @@ function assertEqual(actual, expected, message) {
 const baseConfig = {
   userDataDir: testDir,
   sharedUserDataDir: path.join(testDir, "shared-users"),
+  logDir: path.join(testDir, "logs", "security"),
   defaultRole: "guest",
   blockedPatterns: ["全局敏感词"],
   roleTemplates: {
@@ -114,6 +115,30 @@ test("getUserPermissions - custom allowedDir also sets userDataPath", () => {
   const permissions = hook.getUserPermissions("user", "feishu_vip", "feishu", baseConfig, baseConfig.userRules[2]);
   assertEqual(permissions.allowedDir, path.join(testDir, "custom-vip-home"), "allowedDir should use custom path");
   assertEqual(permissions.userDataPath, path.join(testDir, "custom-vip-home"), "userDataPath should follow custom path");
+});
+
+test("getConfig - merges runtime config with disk config", () => {
+  const config = hook.getConfig({
+    cfg: {
+      hooks: {
+        internal: {
+          entries: {
+            "user-permissions": {
+              config: {
+                defaultRole: "guest"
+              }
+            }
+          }
+        }
+      }
+    }
+  });
+
+  assertEqual(config.defaultRole, "guest", "Runtime config should override defaultRole");
+  assert(
+    String(config.userDataDir).includes("/Documents/OpenClawData/agents/{agentId}/users"),
+    "Disk config should backfill external userDataDir"
+  );
 });
 
 test("shared profile proposal - applies safe fields and rejects protected fields", () => {
