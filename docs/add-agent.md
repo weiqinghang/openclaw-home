@@ -56,7 +56,13 @@
 
 当前运行态不放 `~/.openclaw`，统一放到：
 
-- `~/Documents/OpenClawData/agents/{agentId}/`
+- `{dataRoot}/agents/{agentId}/`
+
+其中 `{dataRoot}` 默认是：
+
+- `~/Documents/OpenClawData`
+
+如果你已经自定义过数据根目录，以当前 `openclaw.json` 中各运行时路径为准；推荐统一使用脚本修改，不要手工逐项改。
 
 至少创建：
 
@@ -94,7 +100,7 @@
 {
   "id": "athena",
   "agentDir": "/Users/你的用户名/.openclaw/agents/athena/agent",
-  "workspace": "/Users/你的用户名/Documents/OpenClawData/agents/athena/workspace"
+  "workspace": "{dataRoot}/agents/athena/workspace"
 }
 ```
 
@@ -212,3 +218,23 @@ openclaw pairing approve feishu <PAIRING_CODE>
 4. 再补 secrets
 5. 再去飞书后台配 App
 6. 最后重启和 pairing 测试
+
+## 12. 如果你想改数据根目录
+
+执行：
+
+```bash
+node scripts/set-data-root.js /你的/绝对路径
+```
+
+然后：
+
+1. 在新目录下创建对应 `agents/{agentId}/...`
+2. 重新补 workspace 软链接
+3. 如有旧数据，执行：
+
+```bash
+node scripts/migrate-runtime-data.js
+```
+
+4. 重启 gateway

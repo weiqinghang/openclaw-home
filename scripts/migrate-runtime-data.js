@@ -10,10 +10,34 @@ const ROOT = path.join(HOME, ".openclaw");
 const OLD_USERS_DIR = path.join(ROOT, "users");
 const OLD_SECURITY_LOG = path.join(ROOT, "logs", "security", "user-permissions.log");
 const GATEWAY_LOG = path.join(ROOT, "logs", "gateway.log");
-const DATA_ROOT = path.join(HOME, "Documents", "OpenClawData");
+
+function loadJson(filePath) {
+  try {
+    return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  } catch {
+    return {};
+  }
+}
+
+const CONFIG = loadJson(path.join(ROOT, "openclaw.json"));
+const DATA_ROOT = resolveDataRoot(CONFIG);
 const AGENTS_ROOT = path.join(DATA_ROOT, "agents");
 const SHARED_USERS_ROOT = path.join(DATA_ROOT, "shared-users");
 const LEGACY_ROOT = path.join(DATA_ROOT, "legacy");
+
+function resolveDataRoot(config) {
+  const sharedDir = config?.hooks?.internal?.entries?.["user-permissions"]?.config?.sharedUserDataDir;
+  if (typeof sharedDir === "string" && sharedDir.trim()) {
+    return path.dirname(sharedDir);
+  }
+
+  const sessionStore = config?.session?.store;
+  if (typeof sessionStore === "string" && sessionStore.includes("/agents/")) {
+    return sessionStore.split("/agents/")[0];
+  }
+
+  return path.join(HOME, "Documents", "OpenClawData");
+}
 
 function ensureDir(targetPath) {
   fs.mkdirSync(targetPath, { recursive: true });

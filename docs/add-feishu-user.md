@@ -73,8 +73,10 @@ openclaw pairing approve feishu <PAIRING_CODE>
 
 当前落盘：
 
-- 私有目录：`~/Documents/OpenClawData/agents/{agentId}/users/...`
-- 公共画像：`~/Documents/OpenClawData/shared-users/...`
+- 私有目录：`{dataRoot}/agents/{agentId}/users/...`
+- 公共画像：`{dataRoot}/shared-users/...`
+
+其中 `{dataRoot}` 默认是 `~/Documents/OpenClawData`，也可以由管理员自定义。
 
 ## 6. 如果用户说“机器人不认识我”
 

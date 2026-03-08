@@ -13,6 +13,7 @@
 - 新增跨 Agent 公共用户画像层
 - 新增共享画像字段白名单与受保护字段机制
 - 新增共享画像提案接口与提案日志
+- 新增数据根目录修改脚本 `scripts/set-data-root.js`
 
 ### Changed
 
@@ -24,6 +25,7 @@
 - `user-permissions` Hook 改为支持按 `{agentId}` 分流用户数据
 - 用户记忆模型改为“公共层互通 + 私有层隔离”
 - 新增运行时数据迁移脚本 `scripts/migrate-runtime-data.js`
+- `~/Documents/OpenClawData` 改为通过 `scripts/set-data-root.js` 统一修改
 
 ### Fixed
 

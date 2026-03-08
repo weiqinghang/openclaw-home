@@ -50,7 +50,11 @@
 ## 数据分层
 
 - 仓库内：配置、人设、长期记忆、技能、Hook
-- 仓库外：`~/Documents/OpenClawData/`
+- 仓库外：默认 `~/Documents/OpenClawData/`，但**可自定义**
+
+统一入口：
+
+- `node scripts/set-data-root.js /你的/绝对路径`
 
 运行时目录：
 
