@@ -1,0 +1,344 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.2",
+    "lastTouchedAt": "2026-03-07T17:10:47.752Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-03-07T17:10:47.726Z",
+    "lastRunVersion": "2026.3.2",
+    "lastRunCommand": "configure",
+    "lastRunMode": "local"
+  },
+  "auth": {
+    "profiles": {
+      "minimax-cn:default": {
+        "provider": "minimax-cn",
+        "mode": "api_key"
+      },
+      "openai-codex:default": {
+        "provider": "openai-codex",
+        "mode": "oauth"
+      }
+    },
+    "order": {
+      "openai-codex": [
+        "openai-codex:default"
+      ]
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "minimax-cn": {
+        "baseUrl": "https://api.minimaxi.com/anthropic",
+        "api": "anthropic-messages",
+        "models": [
+          {
+            "id": "MiniMax-M2.5",
+            "name": "MiniMax M2.5",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0.3,
+              "output": 1.2,
+              "cacheRead": 0.03,
+              "cacheWrite": 0.12
+            },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "secrets": {
+    "providers": {
+      "default": {
+        "source": "env"
+      },
+      "localfile": {
+        "source": "file",
+        "path": "~/.openclaw/secrets.local.json",
+        "mode": "json"
+      }
+    },
+    "defaults": {
+      "env": "default",
+      "file": "localfile"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai-codex/gpt-5.3-codex",
+        "fallbacks": [
+          "minimax-cn/MiniMax-M2.5"
+        ]
+      },
+      "models": {
+        "minimax-cn/MiniMax-M2.5": {
+          "alias": "Minimax"
+        },
+        "openai-codex/gpt-5.3-codex": {
+          "alias": "Codex"
+        }
+      },
+      "workspace": "/Users/claw/Documents/OpenClawData/agents/wukong/workspace",
+      "memorySearch": {
+        "enabled": false,
+        "store": {
+          "path": "/Users/claw/Documents/OpenClawData/agents/{agentId}/memory-search/index.sqlite"
+        }
+      },
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4
+    },
+    "list": [
+      {
+        "id": "wukong",
+        "default": true,
+        "agentDir": "/Users/claw/.openclaw/agents/wukong/agent",
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/wukong/workspace"
+      },
+      {
+        "id": "taibai",
+        "agentDir": "/Users/claw/.openclaw/agents/taibai/agent",
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/taibai/workspace"
+      },
+      {
+        "id": "puti",
+        "agentDir": "/Users/claw/.openclaw/agents/puti/agent",
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/puti/workspace"
+      }
+    ]
+  },
+  "tools": {
+    "web": {
+      "search": {
+        "enabled": true
+      },
+      "fetch": {
+        "enabled": true
+      }
+    }
+  },
+  "bindings": [
+    {
+      "agentId": "wukong",
+      "match": {
+        "channel": "feishu",
+        "accountId": "wukong"
+      }
+    },
+    {
+      "agentId": "taibai",
+      "match": {
+        "channel": "feishu",
+        "accountId": "taibai"
+      }
+    },
+    {
+      "agentId": "puti",
+      "match": {
+        "channel": "feishu",
+        "accountId": "puti"
+      }
+    }
+  ],
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer",
+    "store": "/Users/claw/Documents/OpenClawData/agents/{agentId}/sessions/sessions.json"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "session-memory": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        },
+        "boot-md": {
+          "enabled": true
+        },
+        "user-permissions": {
+          "enabled": true,
+          "config": {
+            "defaultRole": "guest",
+            "userDataDir": "/Users/claw/Documents/OpenClawData/agents/{agentId}/users",
+            "logDir": "/Users/claw/Documents/OpenClawData/agents/{agentId}/logs/security",
+            "blockedPatterns": [],
+            "roleTemplates": {
+              "admin": {
+                "allowedTools": [
+                  "*"
+                ],
+                "allowedDir": "/Users/claw"
+              },
+              "trusted": {
+                "allowedTools": [
+                  "web_search",
+                  "web_fetch",
+                  "browser",
+                  "feishu_doc",
+                  "feishu_wiki",
+                  "feishu_bitable",
+                  "read",
+                  "write",
+                  "message",
+                  "tts"
+                ]
+              },
+              "guest": {
+                "allowedTools": [
+                  "message",
+                  "web_search"
+                ]
+              }
+            },
+            "userRules": [
+              {
+                "name": "owner-feishu",
+                "role": "admin",
+                "match": {
+                  "userIds": [
+                    "ou_127b9bf41eae8201c7b6062bca18b0ec"
+                  ]
+                },
+                "profile": {
+                  "nickname": "claw"
+                }
+              },
+              {
+                "name": "gateway-local",
+                "role": "admin",
+                "match": {
+                  "userIds": [
+                    "webchat_gateway-client"
+                  ],
+                  "channels": [
+                    "webchat"
+                  ]
+                },
+                "profile": {
+                  "nickname": "gateway"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "domain": "feishu",
+      "connectionMode": "websocket",
+      "groupPolicy": "allowlist",
+      "groupAllowFrom": [
+        "ou_127b9bf41eae8201c7b6062bca18b0ec"
+      ],
+      "requireMention": true,
+      "userAllowlist": [
+        "ou_127b9bf41eae8201c7b6062bca18b0ec"
+      ],
+      "accounts": [
+        {
+          "id": "wukong",
+          "appId": "cli_a915a84b1db8dbd6",
+          "appSecret": {
+            "source": "file",
+            "provider": "localfile",
+            "id": "/channels/feishu/accounts/wukong/appSecret"
+          }
+        },
+        {
+          "id": "taibai",
+          "appId": "cli_a92b7fe2b3b8dcd5",
+          "appSecret": {
+            "source": "file",
+            "provider": "localfile",
+            "id": "/channels/feishu/accounts/taibai/appSecret"
+          }
+        },
+        {
+          "id": "puti",
+          "appId": "cli_a92b7aa561b8dcd1",
+          "appSecret": {
+            "source": "file",
+            "provider": "localfile",
+            "id": "/channels/feishu/accounts/puti/appSecret"
+          }
+        }
+      ]
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "controlUi": {
+      "allowedOrigins": [
+        "http://127.0.0.1:18789",
+        "http://localhost:18789"
+      ]
+    },
+    "auth": {
+      "mode": "token",
+      "token": "${OPENCLAW_GATEWAY_TOKEN}"
+    },
+    "trustedProxies": [
+      "127.0.0.1",
+      "::1"
+    ],
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    }
+  },
+  "skills": {
+    "install": {
+      "nodeManager": "npm"
+    },
+    "entries": {
+      "mcporter": {
+        "enabled": true,
+        "env": {
+          "MINIMAX_API_KEY": "${MINIMAX_API_KEY}",
+          "MINIMAX_API_HOST": "https://api.minimaxi.com"
+        }
+      }
+    }
+  },
+  "plugins": {
+    "allow": [
+      "feishu"
+    ],
+    "slots": {
+      "memory": "none"
+    },
+    "entries": {
+      "feishu": {
+        "enabled": true
+      }
+    }
+  }
+}

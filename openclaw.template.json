@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.3.2"
+  },
+  "auth": {
+    "profiles": {
+      "minimax-cn:default": {
+        "provider": "minimax-cn",
+        "mode": "api_key"
+      },
+      "openai-codex:default": {
+        "provider": "openai-codex",
+        "mode": "oauth"
+      }
+    },
+    "order": {
+      "openai-codex": [
+        "openai-codex:default"
+      ]
+    }
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "minimax-cn": {
+        "baseUrl": "https://api.minimaxi.com/anthropic",
+        "api": "anthropic-messages",
+        "models": [
+          {
+            "id": "MiniMax-M2.5",
+            "name": "MiniMax M2.5",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0.3,
+              "output": 1.2,
+              "cacheRead": 0.03,
+              "cacheWrite": 0.12
+            },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "secrets": {
+    "providers": {
+      "default": {
+        "source": "env"
+      },
+      "localfile": {
+        "source": "file",
+        "path": "~/.openclaw/secrets.local.json",
+        "mode": "json"
+      }
+    },
+    "defaults": {
+      "env": "default",
+      "file": "localfile"
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai-codex/gpt-5.3-codex",
+        "fallbacks": [
+          "minimax-cn/MiniMax-M2.5"
+        ]
+      },
+      "models": {
+        "minimax-cn/MiniMax-M2.5": {
+          "alias": "Minimax"
+        },
+        "openai-codex/gpt-5.3-codex": {
+          "alias": "Codex"
+        }
+      },
+      "workspace": "/Users/yourname/Documents/OpenClawData/agents/wukong/workspace",
+      "memorySearch": {
+        "enabled": false,
+        "store": {
+          "path": "/Users/yourname/Documents/OpenClawData/agents/{agentId}/memory-search/index.sqlite"
+        }
+      },
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "maxConcurrent": 4
+    },
+    "list": [
+      {
+        "id": "wukong",
+        "default": true,
+        "agentDir": "/Users/yourname/.openclaw/agents/wukong/agent",
+        "workspace": "/Users/yourname/Documents/OpenClawData/agents/wukong/workspace"
+      },
+      {
+        "id": "taibai",
+        "agentDir": "/Users/yourname/.openclaw/agents/taibai/agent",
+        "workspace": "/Users/yourname/Documents/OpenClawData/agents/taibai/workspace"
+      },
+      {
+        "id": "puti",
+        "agentDir": "/Users/yourname/.openclaw/agents/puti/agent",
+        "workspace": "/Users/yourname/Documents/OpenClawData/agents/puti/workspace"
+      }
+    ]
+  },
+  "bindings": [
+    {
+      "agentId": "wukong",
+      "match": {
+        "channel": "feishu",
+        "accountId": "wukong"
+      }
+    },
+    {
+      "agentId": "taibai",
+      "match": {
+        "channel": "feishu",
+        "accountId": "taibai"
+      }
+    },
+    {
+      "agentId": "puti",
+      "match": {
+        "channel": "feishu",
+        "accountId": "puti"
+      }
+    }
+  ],
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer",
+    "store": "/Users/yourname/Documents/OpenClawData/agents/{agentId}/sessions/sessions.json"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "session-memory": {
+          "enabled": true
+        },
+        "command-logger": {
+          "enabled": true
+        },
+        "bootstrap-extra-files": {
+          "enabled": true
+        },
+        "boot-md": {
+          "enabled": true
+        },
+        "user-permissions": {
+          "enabled": true,
+          "config": {
+            "defaultRole": "guest",
+            "userDataDir": "/Users/yourname/Documents/OpenClawData/agents/{agentId}/users",
+            "logDir": "/Users/yourname/Documents/OpenClawData/agents/{agentId}/logs/security",
+            "blockedPatterns": [],
+            "roleTemplates": {
+              "admin": {
+                "allowedTools": [
+                  "*"
+                ],
+                "allowedDir": "/Users/yourname"
+              },
+              "trusted": {
+                "allowedTools": [
+                  "web_search",
+                  "web_fetch",
+                  "browser",
+                  "feishu_doc",
+                  "feishu_wiki",
+                  "feishu_bitable",
+                  "read",
+                  "write",
+                  "message",
+                  "tts"
+                ]
+              },
+              "guest": {
+                "allowedTools": [
+                  "message",
+                  "web_search"
+                ]
+              }
+            },
+            "userRules": [
+              {
+                "name": "owner-feishu",
+                "role": "admin",
+                "match": {
+                  "userIds": [
+                    "your-feishu-user-id"
+                  ]
+                },
+                "profile": {
+                  "nickname": "owner"
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "channels": {
+    "feishu": {
+      "enabled": true,
+      "domain": "feishu",
+      "connectionMode": "websocket",
+      "groupPolicy": "allowlist",
+      "groupAllowFrom": [
+        "your-feishu-user-id"
+      ],
+      "requireMention": true,
+      "userAllowlist": [
+        "your-feishu-user-id"
+      ],
+      "accounts": [
+        {
+          "id": "wukong",
+          "appId": "your-feishu-app-id",
+          "appSecret": {
+            "source": "file",
+            "provider": "localfile",
+            "id": "/channels/feishu/accounts/wukong/appSecret"
+          }
+        },
+        {
+          "id": "taibai",
+          "appId": "your-feishu-app-id",
+          "appSecret": {
+            "source": "file",
+            "provider": "localfile",
+            "id": "/channels/feishu/accounts/taibai/appSecret"
+          }
+        },
+        {
+          "id": "puti",
+          "appId": "your-feishu-app-id",
+          "appSecret": {
+            "source": "file",
+            "provider": "localfile",
+            "id": "/channels/feishu/accounts/puti/appSecret"
+          }
+        }
+      ]
+    }
+  }
+}

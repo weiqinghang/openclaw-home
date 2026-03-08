@@ -1,0 +1,81 @@
+# Core rule: ignore everything by default, then whitelist versioned assets.
+*
+
+# Keep git rules.
+!.gitignore
+!openclaw.json
+!openclaw.template.json
+!scripts/
+!scripts/**
+!secrets.local.example.json
+
+# Keep agent personas and long-term assets.
+!agents/
+agents/*
+!agents/.gitignore
+!agents/wukong/
+!agents/wukong/*.md
+agents/wukong/agent/
+!agents/taibai/
+!agents/taibai/*.md
+agents/taibai/agent/
+!agents/puti/
+!agents/puti/*.md
+agents/puti/agent/
+agents/main/
+
+# Keep shared skills and extensions source.
+!core/
+!core/skills/
+!core/skills/**
+core/skills/**/cache/
+core/skills/**/.clawhub/
+core/skills/**/*.log
+core/skills/**/node_modules/
+core/skills/**/.learnings/
+core/skills/**/*backup*.md
+core/skills/**/*draft*.md
+
+!hooks/
+hooks/*
+!hooks/user-permissions/
+hooks/user-permissions/.git/
+hooks/user-permissions/node_modules/
+!hooks/user-permissions/.gitignore
+!hooks/user-permissions/HOOK.md
+!hooks/user-permissions/handler.js
+!hooks/user-permissions/handler.ts
+!hooks/user-permissions/handler.test.js
+!hooks/user-permissions/handler.test.ts
+!hooks/user-permissions/package.json
+!hooks/user-permissions/package-lock.json
+
+!extensions/
+extensions/.openclaw-install-backups/
+
+# Keep shell integration and static UI source if needed later.
+!canvas/
+!canvas/index.html
+!completions/
+!completions/**
+
+# Local secret payloads.
+secrets.local.json
+
+# Runtime, secrets, logs, caches.
+browser/
+credentials/
+cron/
+delivery-queue/
+devices/
+exec-approvals.json
+feishu/
+gateways/
+identity/
+logs/
+media/
+memory/
+subagents/
+update-check.json
+users/
+workspace
