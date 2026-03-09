@@ -15,18 +15,10 @@
 
 # Keep agent personas and long-term assets.
 !agents/
-agents/*
 !agents/.gitignore
-!agents/wukong/
-!agents/wukong/*.md
-agents/wukong/agent/
-!agents/taibai/
-!agents/taibai/*.md
-agents/taibai/agent/
-!agents/guanyin/
-!agents/guanyin/*.md
-agents/guanyin/agent/
-agents/main/
+!agents/**
+agents/**/agent/
+agents/**/sessions/
 
 # Keep shared skills and extensions source.
 !core/
