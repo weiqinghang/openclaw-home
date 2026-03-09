@@ -1,34 +1,19 @@
 # 新增 Agent 指引
 
-本文说明如何在当前 `~/.openclaw` 架构中新增一个自己的 Agent，并把它接到飞书。
+目标：在当前仓库中新增一个 **符合既有规范** 的 Agent，并接入飞书。
 
-## 目标结果
+## 原则
 
-完成后应具备：
+- `~/.openclaw` 只放配置与核心资产
+- 运行态一律放外部数据根目录
+- 1 个飞书 App 对应 1 个 `accountId`
+- 1 个 `accountId` 只绑定 1 个 `agentId`
+- `agentId` 稳定，不用中文，不随人设改名
+- 新 Agent 不搞路径特例
 
-- 一个新的 Agent 目录
-- 一个新的飞书 App
-- `openclaw.json` 中新增 `agent + binding + feishu account`
-- 外部运行目录已创建
-- 新 App 发消息后能进入新 Agent
+## 目录模型
 
-## 1. 先确定 4 个标识
-
-新增前先确定：
-
-- `agentId`：内部唯一 ID，只用小写英文、数字、`-`、`_`
-- `displayName`：Agent 展示名
-- `persona`：人格定位
-- `feishu app`：对应飞书应用
-
-示例：
-
-- `agentId`: `athena`
-- `displayName`: `战略顾问雅典娜`
-
-## 2. 在 `~/.openclaw/agents/` 下创建 Agent 核心目录
-
-新建：
+仓库内核心资产：
 
 - `~/.openclaw/agents/{agentId}/IDENTITY.md`
 - `~/.openclaw/agents/{agentId}/AGENTS.md`
@@ -39,43 +24,60 @@
 - `~/.openclaw/agents/{agentId}/TOOLS.md`
 - `~/.openclaw/agents/{agentId}/agent/`
 
-其中：
+仓库外运行态：
 
-- `IDENTITY.md`：人格定义
-- `MEMORY.md`：Agent 长期记忆
-- `TOOLS.md`：工具边界与偏好
-- `agent/`：模型认证与 Agent 运行配置
+- `{dataRoot}/agents/{agentId}/workspace`
+- `{dataRoot}/agents/{agentId}/sessions`
+- `{dataRoot}/agents/{agentId}/users`
+- `{dataRoot}/agents/{agentId}/logs/security`
 
-最少先补好：
+默认 `dataRoot`：
+
+- `~/Documents/OpenClawData`
+
+## 必备标识
+
+- `agentId`：内部 ID，如 `athena`
+- `displayName`：展示名，如 `战略顾问雅典娜`
+- `accountId`：建议与 `agentId` 相同
+- `FEISHU_{AGENT}_APP_SECRET`：环境变量名
+
+建议：
+
+- `agentId = accountId`
+- 环境变量名用大写下划线
+
+## 新增步骤
+
+### 1. 建核心资产目录
+
+至少准备：
 
 - `IDENTITY.md`
 - `AGENTS.md`
 - `MEMORY.md`
+- `TOOLS.md`
+- `agent/auth-profiles.json`
+- `agent/models.json`
 
-## 3. 在外部数据目录创建运行时目录
+其他文件建议一并补齐：
 
-当前运行态不放 `~/.openclaw`，统一放到：
+- `SOUL.md`
+- `USER.md`
+- `HEARTBEAT.md`
 
-- `{dataRoot}/agents/{agentId}/`
-
-其中 `{dataRoot}` 默认是：
-
-- `~/Documents/OpenClawData`
-
-如果你已经自定义过数据根目录，以当前 `openclaw.json` 中各运行时路径为准；推荐统一使用脚本修改，不要手工逐项改。
+### 2. 建运行时目录
 
 至少创建：
 
-- `workspace/`
-- `sessions/`
-- `users/`
-- `logs/security/`
+- `workspace`
+- `sessions`
+- `users`
+- `logs/security`
 
-## 4. 给 workspace 补核心文件链接
+### 3. 给 workspace 补软链接
 
-当前架构下，workspace 里需要能看到 Agent 核心文件。
-
-至少补这些软链接：
+至少链接：
 
 - `AGENTS.md`
 - `IDENTITY.md`
@@ -86,27 +88,26 @@
 - `TOOLS.md`
 - `skills -> ~/.openclaw/core/skills`
 
-如果缺这些文件，Agent 可能能启动，但一收消息就报错。
+缺这些链接，常见结果是：
 
-## 5. 修改 `openclaw.json`
+- Agent 能启动
+- 一收消息就因缺文件报错
 
-需要改 3 处。
+### 4. 修改 `openclaw.json`
 
-### 5.1 `agents.list`
+必须同时改 3 处。
 
-新增：
+`agents.list`：
 
 ```json
 {
   "id": "athena",
   "agentDir": "/Users/你的用户名/.openclaw/agents/athena/agent",
-  "workspace": "{dataRoot}/agents/athena/workspace"
+  "workspace": "/Users/你的用户名/Documents/OpenClawData/agents/athena/workspace"
 }
 ```
 
-### 5.2 `bindings`
-
-新增：
+`bindings`：
 
 ```json
 {
@@ -118,9 +119,7 @@
 }
 ```
 
-### 5.3 `channels.feishu.accounts`
-
-新增：
+`channels.feishu.accounts`：
 
 ```json
 "athena": {
@@ -129,95 +128,170 @@
 }
 ```
 
-## 6. 更新 secrets
+### 5. 更新本地 secrets
 
-把新 App 的 secret 写到本地：
+写入：
 
 - `~/.openclaw/secrets.local.json`
 
-并同步 LaunchAgent 环境变量：
+新增：
+
+```json
+{
+  "channels": {
+    "feishu": {
+      "accounts": {
+        "athena": {
+          "appSecret": "真实 secret"
+        }
+      }
+    }
+  }
+}
+```
+
+### 6. 同步 LaunchAgent
+
+这是最容易漏的。
+
+仅改 `secrets.local.json` 不够。  
+Gateway 作为 LaunchAgent 启动时，只认 **plist 里的环境变量**。
+
+必须把新变量注入：
 
 - `FEISHU_ATHENA_APP_SECRET`
 
-如果只改了 `openclaw.json`，没补 secret，gateway 会启动失败或该 app 无法连上。
+并重启 gateway。
 
-## 7. 去飞书后台创建并配置 App
+否则会出现：
 
-在飞书开发者后台：
+- `openclaw.json` 看起来没问题
+- `secrets.local.json` 里也有 secret
+- 但新 App 死活不在线
+
+### 7. 配飞书后台
+
+至少完成：
 
 1. 创建应用
-2. 开启机器人能力
+2. 开启机器人
 3. 开启事件与回调
-4. 使用**长连接**接收事件
+4. 使用长连接
 5. 添加消息接收事件
-6. 发布应用版本
+6. 发布版本
 
-至少要有：
+不要只订阅：
 
-- 机器人已启用
-- 事件订阅已开启
-- 消息接收事件已添加
-- 当前版本已发布
+- `用户进入与机器人的会话`
 
-如果只加了“用户进入与机器人的会话”，Agent 不会正常回复消息。
+这只能触发进会话事件，不能处理正常消息。
 
-## 8. 重启 gateway
+### 8. 校验与重启
+
+本仓库里不要直接裸跑 `openclaw ...`。  
+优先使用：
+
+```bash
+./scripts/with-openclaw-secrets.sh openclaw <subcommand>
+```
+
+否则容易因为没注入本地 secrets，看到假的缺 secret 告警。
 
 执行：
 
 ```bash
+./scripts/with-openclaw-secrets.sh openclaw config validate --json
 ./scripts/with-openclaw-secrets.sh openclaw gateway restart --force
 ```
 
-## 9. 首次测试
+### 9. 首次测试
 
-用新飞书 App 给机器人发消息。
+给新 App 发消息。
 
-你应看到：
-
-- App 能收到消息
-- 如果未授权，会出现 pairing code
-- owner 批准 pairing 后，再发消息可正常回复
-
-批准 pairing：
+若出现 pairing code，执行：
 
 ```bash
 openclaw pairing approve feishu <PAIRING_CODE>
 ```
 
-## 10. 排错重点
+然后再发一条消息验证：
 
-### 有消息但进错 Agent
+- 是否进入正确 Agent
+- 是否正常回复
 
-检查：
+## 最容易忽略的点
 
-- `bindings.match.accountId`
-- `channels.feishu.accounts` 是否为**对象**而不是数组
+### 1. LaunchAgent 没同步
 
-### App 在线但完全不回
+最常见。  
+现象：
 
-检查：
+- 配置对
+- secret 文件对
+- gateway 也在跑
+- 但新 App 不在线
 
-- 飞书事件是否已发布
-- 是否订阅了消息接收事件
-- App secret 是否已写入本地 secrets 和 LaunchAgent
+根因：
 
-### 收到消息后报缺文件
+- LaunchAgent 环境里没有新加的 `FEISHU_*_APP_SECRET`
 
-检查：
+### 2. workspace 用了特例路径
 
-- 外部 `workspace/` 是否补了核心文件软链接
+不要把某个 Agent 指到单独业务目录。  
+标准做法是：
 
-## 11. 建议流程
+- 运行态先放 `{dataRoot}/agents/{agentId}/workspace`
+- 业务文件再在 workspace 内组织
 
-推荐固定顺序：
+### 3. `channels.feishu.accounts` 写成数组
 
-1. 先建 Agent 核心目录
-2. 再建外部运行目录
-3. 再改 `openclaw.json`
-4. 再补 secrets
-5. 再去飞书后台配 App
-6. 最后重启和 pairing 测试
+必须是对象。  
+否则 `accountId -> agentId` 路由可能失效。
+
+### 4. 只建了 Agent 目录，没建运行态目录
+
+这会导致：
+
+- sessions
+- users
+- logs
+
+落盘不完整，甚至报错。
+
+### 5. 只加了进入会话事件
+
+这不会让 Agent 正常回复消息。  
+必须订阅消息接收事件。
+
+### 6. `doctor` / `gateway status` 误报
+
+当前多账号飞书配置是对象结构。  
+有时 `doctor` 或 `gateway status` 会提示：
+
+- `channels.feishu.accounts.default`
+- 单账号迁移建议
+- `RPC probe 1006`
+
+这些不一定代表真实故障。
+
+真正判断标准：
+
+- 新 App 是否能收到消息
+- 日志是否出现 `received message` / `dispatch complete`
+- `./scripts/with-openclaw-secrets.sh openclaw gateway health` 是否正常
+
+## 推荐顺序
+
+1. 先定 `agentId/accountId/displayName`
+2. 建 `agents/{agentId}` 核心资产
+3. 建外部运行态目录
+4. 补 workspace 软链接
+5. 改 `openclaw.json`
+6. 改 `secrets.local.json`
+7. 同步 LaunchAgent
+8. 配飞书后台
+9. 重启 gateway
+10. pairing 与消息实测
 
 ## 12. 如果你想改数据根目录
 

@@ -33,6 +33,7 @@
 - `wukong`：万能管家悟空
 - `taibai`：外贸专家太白金星
 - `guanyin`：观音菩萨
+- `guichengxiang`：归程象
 
 ## 操作指引
 
@@ -62,6 +63,27 @@
 - `openclaw.json`：当前真实配置
 - `openclaw.template.json`：脱敏模板
 - `scripts/with-openclaw-secrets.sh`：加载本地 secrets 后启动 OpenClaw
+
+## 命令入口
+
+本仓库里，涉及配置校验、gateway、models、agent 调用时，优先使用：
+
+```bash
+./scripts/with-openclaw-secrets.sh openclaw <subcommand>
+```
+
+示例：
+
+```bash
+./scripts/with-openclaw-secrets.sh openclaw config validate --json
+./scripts/with-openclaw-secrets.sh openclaw gateway health
+./scripts/with-openclaw-secrets.sh openclaw models list
+```
+
+原因：
+
+- 它会先注入本地 `secrets.local.json`
+- 否则 `openclaw` 直跑时，常出现缺少 `FEISHU_*_APP_SECRET` 的假告警
 
 ## 数据分层
 
@@ -149,3 +171,11 @@
 
 - `openclaw gateway status/health` 仍可能报 `1006`
 - 实际飞书消息链路已可用，不能只看这个探针判断服务不可用
+- `doctor` / `gateway status` 仍可能提示 `channels.feishu.accounts.default` 之类的迁移建议
+- 当前多账号对象结构是刻意配置，不应按该提示回退
+
+判断 gateway 是否真的有问题，优先看：
+
+- 飞书消息是否能收到
+- 日志里是否有 `received message` / `dispatch complete`
+- `./scripts/with-openclaw-secrets.sh openclaw gateway health`

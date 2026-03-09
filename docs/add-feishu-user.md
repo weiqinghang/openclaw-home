@@ -36,7 +36,7 @@
 管理员收到 pairing code 后执行：
 
 ```bash
-openclaw pairing approve feishu <PAIRING_CODE>
+./scripts/with-openclaw-secrets.sh openclaw pairing approve feishu <PAIRING_CODE>
 ```
 
 批准后，该用户就能使用对应 App 所绑定的 Agent。
@@ -91,7 +91,7 @@ openclaw pairing approve feishu <PAIRING_CODE>
 
 处理：
 
-- 管理员执行 `openclaw pairing approve feishu <PAIRING_CODE>`
+- 管理员执行 `./scripts/with-openclaw-secrets.sh openclaw pairing approve feishu <PAIRING_CODE>`
 
 ### 完全没反应
 
@@ -104,6 +104,7 @@ openclaw pairing approve feishu <PAIRING_CODE>
 
 - 先确认 App 已发布
 - 再确认消息接收事件已开启
+- 再看 `gateway.log` 是否有 `received message`
 
 ### 进错 Agent
 

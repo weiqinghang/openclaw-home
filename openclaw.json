@@ -110,6 +110,11 @@
         "id": "guanyin",
         "agentDir": "/Users/claw/.openclaw/agents/guanyin/agent",
         "workspace": "/Users/claw/Documents/OpenClawData/agents/guanyin/workspace"
+      },
+      {
+        "id": "guichengxiang",
+        "agentDir": "/Users/claw/.openclaw/agents/guichengxiang/agent",
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/guichengxiang/workspace"
       }
     ]
   },
@@ -143,6 +148,13 @@
       "match": {
         "channel": "feishu",
         "accountId": "guanyin"
+      }
+    },
+    {
+      "agentId": "guichengxiang",
+      "match": {
+        "channel": "feishu",
+        "accountId": "guichengxiang"
       }
     }
   ],
@@ -289,6 +301,10 @@
         "guanyin": {
           "appId": "cli_a92b7aa561b8dcd1",
           "appSecret": "${FEISHU_GUANYIN_APP_SECRET}"
+        },
+        "guichengxiang": {
+          "appId": "cli_a92b7a062579dcc2",
+          "appSecret": "${FEISHU_GUICHENGXIANG_APP_SECRET}"
         }
       }
     }

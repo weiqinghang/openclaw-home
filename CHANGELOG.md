@@ -24,6 +24,7 @@
 
 - 重置多 Agent 架构，旧 `main` 不再作为运行入口
 - 飞书改为 `1 App -> 1 accountId -> 1 agentId`
+- 第 4 个 Agent `guichengxiang` 调整为标准外置运行目录
 - `puti` Agent 全量更名为 `guanyin`
 - 工作区、sessions、users、logs 迁出 `~/.openclaw`
 - `openclaw.json` 改为入库管理，真实密钥不再明文入库
@@ -32,11 +33,14 @@
 - 新增运行时数据迁移脚本 `scripts/migrate-runtime-data.js`
 - `~/Documents/OpenClawData` 改为通过 `scripts/set-data-root.js` 统一修改
 - 太白改为优先走“报价解析 -> 报价生成”与“SKU 提案 -> 确认写入”双流程
+- README 与操作指引补充 `with-openclaw-secrets.sh` 命令入口约定
+- README 与操作指引补充 `doctor` / `gateway status` 常见误报说明
 
 ### Fixed
 
 - 修复 Feishu `accounts` 配置结构错误导致的默认 Agent 串路由
 - 修复 `guanyin` 外置工作区缺失核心文件链接导致的消息分发失败
+- 修复新增 Agent 时最易遗漏的 LaunchAgent secret 同步约束文档
 - 修复 `wukong`、`taibai`、`guanyin` 的 pairing 与多 App 接入链路
 - 修复部分 owner/user 规则匹配问题
 - 迁移旧 `~/.openclaw/users` 用户目录到外部 Agent 用户目录，并生成共享画像目录
