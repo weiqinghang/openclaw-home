@@ -37,11 +37,12 @@
 
 ## 操作指引
 
-- 新增 Agent：[`docs/add-agent.md`](docs/add-agent.md)
-- 新飞书用户接入：[`docs/add-feishu-user.md`](docs/add-feishu-user.md)
-- 外贸轻系统最小模型：[`docs/trade-data-model.md`](docs/trade-data-model.md)
-- Agent 记忆污染事故记录：[`docs/agent-memory-pollution.md`](docs/agent-memory-pollution.md)
-- 副作用测试清场指引：[`docs/side-effect-test-reset.md`](docs/side-effect-test-reset.md)
+- 文档入口：[`docs/index.md`](docs/index.md)
+- 新增 Agent：[`docs/operator/add-agent.md`](docs/operator/add-agent.md)
+- 新飞书用户接入：[`docs/operator/add-feishu-user.md`](docs/operator/add-feishu-user.md)
+- 外贸轻系统最小模型：[`docs/architecture/trade-data-model.md`](docs/architecture/trade-data-model.md)
+- Agent 记忆污染事故记录：[`docs/incidents/agent-memory-pollution.md`](docs/incidents/agent-memory-pollution.md)
+- 副作用测试清场指引：[`docs/operator/side-effect-test-reset.md`](docs/operator/side-effect-test-reset.md)
 
 ## 太白工作流
 

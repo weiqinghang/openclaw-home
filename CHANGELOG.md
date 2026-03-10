@@ -7,9 +7,9 @@
 - 新增 3 个 Agent：`wukong`、`taibai`、`guanyin`
 - 新增仓库级 `README.md`
 - 新增仓库级 `CHANGELOG.md`
-- 新增新增 Agent 指引 `docs/add-agent.md`
-- 新增飞书用户接入指引 `docs/add-feishu-user.md`
-- 新增外贸轻系统最小模型 `docs/trade-data-model.md`
+- 新增新增 Agent 指引 `docs/operator/add-agent.md`
+- 新增飞书用户接入指引 `docs/operator/add-feishu-user.md`
+- 新增外贸轻系统最小模型 `docs/architecture/trade-data-model.md`
 - 新增本地 secrets 启动脚本 `scripts/with-openclaw-secrets.sh`
 - 新增跨 Agent 公共用户画像层
 - 新增共享画像字段白名单与受保护字段机制
@@ -19,8 +19,8 @@
 - 新增太白工作流 Hook `hooks/taibai-workflow/`
 - 新增 SKU 写库提案脚本 `scripts/feishu_trade_bitable_upsert.js`
 - 新增聊天请求解析脚本 `scripts/trade_parse_request.py`
-- 新增 Agent 记忆污染事故记录 `docs/agent-memory-pollution.md`
-- 新增副作用测试清场指引 `docs/side-effect-test-reset.md`
+- 新增 Agent 记忆污染事故记录 `docs/incidents/agent-memory-pollution.md`
+- 新增副作用测试清场指引 `docs/operator/side-effect-test-reset.md`
 
 ### Changed
 

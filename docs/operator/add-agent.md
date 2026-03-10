@@ -75,23 +75,32 @@
 - `users`
 - `logs/security`
 
-### 3. 给 workspace 补软链接
+### 3. 给 workspace 补入口文件
 
-至少链接：
+必须复制成**实体文件**：
 
 - `AGENTS.md`
+- `BOOTSTRAP.md`（如果该 Agent 有）
 - `IDENTITY.md`
 - `SOUL.md`
 - `USER.md`
 - `HEARTBEAT.md`
 - `MEMORY.md`
 - `TOOLS.md`
-- `skills -> ~/.openclaw/core/skills`
 
-缺这些链接，常见结果是：
+可以保留软链接：
+
+- `skills -> ~/.openclaw/core/skills`
+- 业务仓库入口目录
+
+不要把入口文件做成软链接。  
+当前 OpenClaw 对这类入口文件的启动注入不稳定，可能把它们判成 `missing`。
+
+常见结果：
 
 - Agent 能启动
-- 一收消息就因缺文件报错
+- 首轮人格没注入
+- 回答退回通用助理口径
 
 ### 4. 修改 `openclaw.json`
 
@@ -243,12 +252,30 @@ openclaw pairing approve feishu <PAIRING_CODE>
 - 运行态先放 `{dataRoot}/agents/{agentId}/workspace`
 - 业务文件再在 workspace 内组织
 
-### 3. `channels.feishu.accounts` 写成数组
+### 3. workspace 入口文件用了软链接
+
+高风险。  
+现象：
+
+- `BOOTSTRAP.md` 明明存在
+- Agent 还是自称通用助理
+
+根因：
+
+- workspace 内入口文件是软链接
+- 启动注入没稳定跟随软链接
+
+正确做法：
+
+- 入口文件复制为实体文件
+- 只保留 `skills`、业务仓库目录为软链接
+
+### 4. `channels.feishu.accounts` 写成数组
 
 必须是对象。  
 否则 `accountId -> agentId` 路由可能失效。
 
-### 4. 只建了 Agent 目录，没建运行态目录
+### 5. 只建了 Agent 目录，没建运行态目录
 
 这会导致：
 
@@ -258,12 +285,12 @@ openclaw pairing approve feishu <PAIRING_CODE>
 
 落盘不完整，甚至报错。
 
-### 5. 只加了进入会话事件
+### 6. 只加了进入会话事件
 
 这不会让 Agent 正常回复消息。  
 必须订阅消息接收事件。
 
-### 6. `doctor` / `gateway status` 误报
+### 7. `doctor` / `gateway status` 误报
 
 当前多账号飞书配置是对象结构。  
 有时 `doctor` 或 `gateway status` 会提示：
@@ -285,7 +312,7 @@ openclaw pairing approve feishu <PAIRING_CODE>
 1. 先定 `agentId/accountId/displayName`
 2. 建 `agents/{agentId}` 核心资产
 3. 建外部运行态目录
-4. 补 workspace 软链接
+4. 复制 workspace 入口文件，并只保留允许的软链接
 5. 改 `openclaw.json`
 6. 改 `secrets.local.json`
 7. 同步 LaunchAgent
@@ -304,7 +331,7 @@ node scripts/set-data-root.js /你的/绝对路径
 然后：
 
 1. 在新目录下创建对应 `agents/{agentId}/...`
-2. 重新补 workspace 软链接
+2. 重新复制 workspace 入口文件
 3. 如有旧数据，执行：
 
 ```bash
