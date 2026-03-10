@@ -40,6 +40,8 @@
 - 新增 Agent：[`docs/add-agent.md`](docs/add-agent.md)
 - 新飞书用户接入：[`docs/add-feishu-user.md`](docs/add-feishu-user.md)
 - 外贸轻系统最小模型：[`docs/trade-data-model.md`](docs/trade-data-model.md)
+- Agent 记忆污染事故记录：[`docs/agent-memory-pollution.md`](docs/agent-memory-pollution.md)
+- 副作用测试清场指引：[`docs/side-effect-test-reset.md`](docs/side-effect-test-reset.md)
 
 ## 太白工作流
 
@@ -84,6 +86,18 @@
 
 - 它会先注入本地 `secrets.local.json`
 - 否则 `openclaw` 直跑时，常出现缺少 `FEISHU_*_APP_SECRET` 的假告警
+
+## Agent Workspace 规则
+
+- workspace 里的入口文件必须是**实体文件**
+- 适用文件：`AGENTS.md`、`BOOTSTRAP.md`、`IDENTITY.md`、`MEMORY.md`、`SOUL.md`、`TOOLS.md`、`USER.md`、`HEARTBEAT.md`
+- `skills`、业务仓库入口目录可以保留软链接
+
+原因：
+
+- 当前 OpenClaw 对 workspace 入口软链接的启动注入不稳定
+- 软链接时，`systemPromptReport` 可能把文件判成 `missing`
+- 结果是 Agent 退回通用助理口径
 
 ## 数据分层
 
@@ -173,6 +187,7 @@
 - 实际飞书消息链路已可用，不能只看这个探针判断服务不可用
 - `doctor` / `gateway status` 仍可能提示 `channels.feishu.accounts.default` 之类的迁移建议
 - 当前多账号对象结构是刻意配置，不应按该提示回退
+- workspace 入口文件若使用软链接，可能导致人格文件未注入
 
 判断 gateway 是否真的有问题，优先看：
 

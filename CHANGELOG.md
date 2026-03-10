@@ -19,6 +19,8 @@
 - 新增太白工作流 Hook `hooks/taibai-workflow/`
 - 新增 SKU 写库提案脚本 `scripts/feishu_trade_bitable_upsert.js`
 - 新增聊天请求解析脚本 `scripts/trade_parse_request.py`
+- 新增 Agent 记忆污染事故记录 `docs/agent-memory-pollution.md`
+- 新增副作用测试清场指引 `docs/side-effect-test-reset.md`
 
 ### Changed
 
@@ -35,6 +37,7 @@
 - 太白改为优先走“报价解析 -> 报价生成”与“SKU 提案 -> 确认写入”双流程
 - README 与操作指引补充 `with-openclaw-secrets.sh` 命令入口约定
 - README 与操作指引补充 `doctor` / `gateway status` 常见误报说明
+- README 与新增 Agent 指引补充“workspace 入口文件必须实体化”规则
 
 ### Fixed
 
