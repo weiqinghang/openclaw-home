@@ -36,6 +36,7 @@
 - 新增运行时数据迁移脚本 `scripts/migrate-runtime-data.js`
 - `~/Documents/OpenClawData` 改为通过 `scripts/set-data-root.js` 统一修改
 - 太白改为优先走“报价解析 -> 报价生成”与“SKU 提案 -> 确认写入”双流程
+- 太白外贸 skill 脚本迁入 `core/skills/trade-operations-workflow/scripts/`，仓库级同名脚本改为兼容包装层
 - README 与操作指引补充 `with-openclaw-secrets.sh` 命令入口约定
 - README 与操作指引补充 `doctor` / `gateway status` 常见误报说明
 - README 与新增 Agent 指引补充“workspace 入口文件必须实体化”规则

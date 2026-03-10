@@ -48,9 +48,9 @@
 ## 太白工作流
 
 - 总 skill：`core/skills/trade-operations-workflow/`
-- 解析请求：`scripts/trade_parse_request.py`
-- 生成报价：`scripts/trade_generate_quote_from_bitable.py`
-- SKU 提案/写入：`scripts/feishu_trade_bitable_upsert.js`
+- 解析请求：`core/skills/trade-operations-workflow/scripts/trade_parse_request.py`
+- 生成报价：`core/skills/trade-operations-workflow/scripts/trade_generate_quote_from_bitable.py`
+- SKU 提案/写入：`core/skills/trade-operations-workflow/scripts/feishu_trade_bitable_upsert.js`
 - 运行时硬规则：`hooks/taibai-workflow/`
 
 当前规则：

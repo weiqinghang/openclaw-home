@@ -11,10 +11,10 @@
 4. 正式报价优先读取 SKU 多维表格：
    - `L3t3bcP0LaDQcSsz3cDcpEjknTf`
 5. 正式报价优先调用：
-   - `python3 /Users/claw/.openclaw/scripts/trade_parse_request.py`
-   - `python3 /Users/claw/.openclaw/scripts/trade_generate_quote_from_bitable.py`
+   - `python3 /Users/claw/.openclaw/core/skills/trade-operations-workflow/scripts/trade_parse_request.py`
+   - `python3 /Users/claw/.openclaw/core/skills/trade-operations-workflow/scripts/trade_generate_quote_from_bitable.py`
 6. 生成 Excel 后，优先把文件作为飞书文件发送给当前用户：
-   - `node /Users/claw/.openclaw/scripts/feishu_trade_send_file.js "<receiveId>" "<xlsx-path>" "<receiveIdType>"`
+   - `node /Users/claw/.openclaw/core/skills/trade-operations-workflow/scripts/feishu_trade_send_file.js "<receiveId>" "<xlsx-path>" "<receiveIdType>"`
 7. 发完文件后，再补一条简短摘要，不优先回本地路径。
 ## SKU 库
 
@@ -22,10 +22,10 @@
 2. 严禁直接调用多维表格写接口改库。
 3. 严禁跳过提案直接说“已改好”。
 4. 先调用：
-   - `python3 /Users/claw/.openclaw/scripts/trade_parse_request.py`
-   - `node /Users/claw/.openclaw/scripts/feishu_trade_bitable_upsert.js propose`
+   - `python3 /Users/claw/.openclaw/core/skills/trade-operations-workflow/scripts/trade_parse_request.py`
+   - `node /Users/claw/.openclaw/core/skills/trade-operations-workflow/scripts/feishu_trade_bitable_upsert.js propose`
 5. 只有用户明确回复 `确认写入`，才允许调用：
-   - `node /Users/claw/.openclaw/scripts/feishu_trade_bitable_upsert.js apply`
+   - `node /Users/claw/.openclaw/core/skills/trade-operations-workflow/scripts/feishu_trade_bitable_upsert.js apply`
 6. 如果用户回复 `取消`，终止本次修改。
 
 ## 字段边界

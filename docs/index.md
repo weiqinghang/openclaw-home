@@ -12,6 +12,7 @@
 
 - [`architecture/trade-data-model.md`](architecture/trade-data-model.md)：外贸轻系统最小模型
 - [`architecture/agent-context-optimization-plan.md`](architecture/agent-context-optimization-plan.md)：Agent 启动上下文压缩方案
+- [`architecture/skill-structure-standard.md`](architecture/skill-structure-standard.md)：Skill 标准结构约束
 
 ## incidents
 
