@@ -41,6 +41,7 @@
 - 新增 Agent：[`docs/operator/add-agent.md`](docs/operator/add-agent.md)
 - 新飞书用户接入：[`docs/operator/add-feishu-user.md`](docs/operator/add-feishu-user.md)
 - 外贸轻系统最小模型：[`docs/architecture/trade-data-model.md`](docs/architecture/trade-data-model.md)
+- Agent 启动上下文压缩方案：[`docs/architecture/agent-context-optimization-plan.md`](docs/architecture/agent-context-optimization-plan.md)
 - Agent 记忆污染事故记录：[`docs/incidents/agent-memory-pollution.md`](docs/incidents/agent-memory-pollution.md)
 - 副作用测试清场指引：[`docs/operator/side-effect-test-reset.md`](docs/operator/side-effect-test-reset.md)
 

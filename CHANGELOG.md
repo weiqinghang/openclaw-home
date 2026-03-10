@@ -21,6 +21,7 @@
 - 新增聊天请求解析脚本 `scripts/trade_parse_request.py`
 - 新增 Agent 记忆污染事故记录 `docs/incidents/agent-memory-pollution.md`
 - 新增副作用测试清场指引 `docs/operator/side-effect-test-reset.md`
+- 新增 Agent 启动上下文压缩方案 `docs/architecture/agent-context-optimization-plan.md`
 
 ### Changed
 
