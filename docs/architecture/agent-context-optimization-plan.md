@@ -69,6 +69,12 @@
 2. 不再默认给全部 Agent 暴露完整共享技能目录
 3. 将不常用技能改为按需加载，而不是常驻入口
 
+当前已落地：
+
+- `scripts/sync-agent-workspace.js`
+- workspace 入口文件改为实体复制
+- `workspace/skills` 改为按 Agent 白名单重建
+
 优先级：
 
 - `guanyin`
@@ -116,6 +122,7 @@
 - 基础沟通/读写/执行
 - 风险判断
 - Codex 转交能力
+- 当前白名单：`find-skills`、`summarize`
 
 不应默认带：
 
@@ -127,12 +134,14 @@
 - `trade-operations-workflow`
 - 飞书文档/多维表格
 - 文件与脚本执行
+- 当前白名单：`feishu-doc`、`trade-operations-workflow`、`trade-ops-assistant`、`trade-quote-layout`、`trade-quotation-template`
 
 ### guanyin
 
 - 基础沟通
 - 文档读写
 - 少量检索
+- 当前白名单：`summarize`
 
 不应默认带：
 
@@ -143,6 +152,7 @@
 - 文档读取
 - 工件回写
 - Codex 转交
+- 当前白名单：`summarize`
 
 不应默认带：
 
@@ -162,5 +172,5 @@
 
 1. 先做 `wukong` 和 `guanyin` 的 `BOOTSTRAP.md`
 2. 再清 `wukong/MEMORY.md`
-3. 再做技能白名单收缩
+3. 技能白名单收缩已完成，下一步补 operator 文档与效果验证
 4. 最后补正式协作协议

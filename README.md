@@ -89,17 +89,39 @@
 - 它会先注入本地 `secrets.local.json`
 - 否则 `openclaw` 直跑时，常出现缺少 `FEISHU_*_APP_SECRET` 的假告警
 
+同步 Agent workspace 入口文件与技能白名单时，使用：
+
+```bash
+node scripts/sync-agent-workspace.js
+node scripts/sync-agent-workspace.js wukong guanyin
+```
+
+作用：
+
+- 把入口文件复制成 workspace 实体文件
+- 按 Agent 最小技能集重建 `workspace/skills`
+- 避免所有 Agent 默认暴露整库技能
+
 ## Agent Workspace 规则
 
 - workspace 里的入口文件必须是**实体文件**
 - 适用文件：`AGENTS.md`、`BOOTSTRAP.md`、`IDENTITY.md`、`MEMORY.md`、`SOUL.md`、`TOOLS.md`、`USER.md`、`HEARTBEAT.md`
 - `skills`、业务仓库入口目录可以保留软链接
+- 但 `skills` 不再建议整库直链，优先按 Agent 白名单挂载子集
 
 原因：
 
 - 当前 OpenClaw 对 workspace 入口软链接的启动注入不稳定
 - 软链接时，`systemPromptReport` 可能把文件判成 `missing`
 - 结果是 Agent 退回通用助理口径
+- 全量 `skills snapshot` 会抬高启动 token，并削弱角色边界
+
+当前最小技能集：
+
+- `wukong`：`find-skills`、`summarize`
+- `taibai`：`feishu-doc`、`trade-operations-workflow`、`trade-ops-assistant`、`trade-quote-layout`、`trade-quotation-template`
+- `guanyin`：`summarize`
+- `guichengxiang`：`summarize`
 
 ## 数据分层
 

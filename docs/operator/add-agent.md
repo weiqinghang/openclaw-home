@@ -90,8 +90,22 @@
 
 可以保留软链接：
 
-- `skills -> ~/.openclaw/core/skills`
 - 业务仓库入口目录
+
+`skills` 不建议再直接软链接整个 `~/.openclaw/core/skills`。  
+优先按 Agent 最小技能集挂载白名单子集。
+
+推荐做法：
+
+```bash
+node scripts/sync-agent-workspace.js <agentId>
+```
+
+这个脚本会：
+
+- 把入口文件复制成实体文件
+- 重建 `workspace/skills`
+- 仅挂载该 Agent 允许暴露的技能
 
 不要把入口文件做成软链接。  
 当前 OpenClaw 对这类入口文件的启动注入不稳定，可能把它们判成 `missing`。
@@ -101,6 +115,7 @@
 - Agent 能启动
 - 首轮人格没注入
 - 回答退回通用助理口径
+- skills snapshot 过宽，角色边界变虚
 
 ### 4. 修改 `openclaw.json`
 
@@ -211,6 +226,12 @@ Gateway 作为 LaunchAgent 启动时，只认 **plist 里的环境变量**。
 ```bash
 ./scripts/with-openclaw-secrets.sh openclaw config validate --json
 ./scripts/with-openclaw-secrets.sh openclaw gateway restart --force
+```
+
+若修改了入口文件或技能白名单，先执行：
+
+```bash
+node scripts/sync-agent-workspace.js <agentId>
 ```
 
 ### 9. 首次测试
