@@ -1,0 +1,12 @@
+{
+  "defaultAgent": "codex",
+  "defaultPermissions": "approve-reads",
+  "nonInteractivePermissions": "fail",
+  "authPolicy": "skip",
+  "format": "quiet",
+  "agents": {
+    "codex": {
+      "command": "/Users/claw/.openclaw/.acp-tools/node_modules/.bin/codex-acp"
+    }
+  }
+}

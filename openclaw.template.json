@@ -1,6 +1,6 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.2"
+    "lastTouchedVersion": "2026.3.8"
   },
   "auth": {
     "profiles": {
@@ -65,7 +65,7 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "openai-codex/gpt-5.3-codex",
+        "primary": "openai-codex/gpt-5.4",
         "fallbacks": [
           "minimax-cn/MiniMax-M2.5"
         ]
@@ -74,7 +74,8 @@
         "minimax-cn/MiniMax-M2.5": {
           "alias": "Minimax"
         },
-        "openai-codex/gpt-5.3-codex": {
+        "openai-codex/gpt-5.3-codex": {},
+        "openai-codex/gpt-5.4": {
           "alias": "Codex"
         }
       },
@@ -106,6 +107,11 @@
         "id": "guanyin",
         "agentDir": "/Users/yourname/.openclaw/agents/guanyin/agent",
         "workspace": "/Users/yourname/Documents/OpenClawData/agents/guanyin/workspace"
+      },
+      {
+        "id": "guichengxiang",
+        "agentDir": "/Users/yourname/.openclaw/agents/guichengxiang/agent",
+        "workspace": "/Users/yourname/Documents/OpenClawData/agents/guichengxiang/workspace"
       }
     ]
   },
@@ -129,6 +135,13 @@
       "match": {
         "channel": "feishu",
         "accountId": "guanyin"
+      }
+    },
+    {
+      "agentId": "guichengxiang",
+      "match": {
+        "channel": "feishu",
+        "accountId": "guichengxiang"
       }
     }
   ],
@@ -260,7 +273,28 @@
         "guanyin": {
           "appId": "your-feishu-app-id",
           "appSecret": "${FEISHU_GUANYIN_APP_SECRET}"
+        },
+        "guichengxiang": {
+          "appId": "your-feishu-app-id",
+          "appSecret": "${FEISHU_GUICHENGXIANG_APP_SECRET}"
         }
+      }
+    }
+  },
+  "plugins": {
+    "allow": [
+      "feishu",
+      "acpx"
+    ],
+    "slots": {
+      "memory": "none"
+    },
+    "entries": {
+      "feishu": {
+        "enabled": true
+      },
+      "acpx": {
+        "enabled": true
       }
     }
   }

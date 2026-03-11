@@ -25,7 +25,7 @@
 
 仍待继续打磨：
 
-- 3 个 Agent 的能力与人格差异化还不够明显
+- 4 个 Agent 的能力与人格差异化还不够明显
 - `openclaw gateway status/health` 仍可能出现 CLI 探针误报
 
 ## 当前 Agent
@@ -84,10 +84,20 @@
 ./scripts/with-openclaw-secrets.sh openclaw models list
 ```
 
+项目内走 ACP 与 Codex 通信时，优先使用：
+
+```bash
+./scripts/acpx-codex.sh exec "用一句话说明当前仓库做什么"
+./scripts/acpx-codex.sh codex sessions new --name project-main
+./scripts/acpx-codex.sh codex prompt -s project-main "继续上一个任务"
+```
+
 原因：
 
 - 它会先注入本地 `secrets.local.json`
 - 否则 `openclaw` 直跑时，常出现缺少 `FEISHU_*_APP_SECRET` 的假告警
+- `acpx` 会固定使用本仓库 `.acpxrc.json`
+- `codex-acp` 已固定到仓库内本地安装版本，避免 `npx` 远程拉取导致不稳定
 
 同步 Agent workspace 入口文件与技能白名单时，使用：
 
@@ -153,11 +163,12 @@ node scripts/sync-agent-workspace.js wukong guanyin
 - `wukong` -> 万能管家悟空
 - `taibai` -> 外贸专家太白金星
 - `guanyin` -> 观音菩萨
+- `guichengxiang` -> 归程象
 
 当前判断：
 
 - 多 App 进多 Agent 的链路已稳定
-- 3 个 Agent 已能分别独立收发消息
+- 4 个 Agent 已能分别独立收发消息
 
 ### 多用户架构
 

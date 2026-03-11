@@ -1,13 +1,29 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.2",
-    "lastTouchedAt": "2026-03-07T17:10:47.752Z"
+    "lastTouchedVersion": "2026.3.8",
+    "lastTouchedAt": "2026-03-10T16:12:13.359Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-07T17:10:47.726Z",
     "lastRunVersion": "2026.3.2",
     "lastRunCommand": "configure",
     "lastRunMode": "local"
+  },
+  "secrets": {
+    "providers": {
+      "default": {
+        "source": "env"
+      },
+      "localfile": {
+        "source": "file",
+        "path": "~/.openclaw/secrets.local.json",
+        "mode": "json"
+      }
+    },
+    "defaults": {
+      "env": "default",
+      "file": "localfile"
+    }
   },
   "auth": {
     "profiles": {
@@ -53,32 +69,17 @@
       }
     }
   },
-  "secrets": {
-    "providers": {
-      "default": {
-        "source": "env"
-      },
-      "localfile": {
-        "source": "file",
-        "path": "~/.openclaw/secrets.local.json",
-        "mode": "json"
-      }
-    },
-    "defaults": {
-      "env": "default",
-      "file": "localfile"
-    }
-  },
   "agents": {
     "defaults": {
       "model": {
-        "primary": "openai-codex/gpt-5.3-codex"
+        "primary": "openai-codex/gpt-5.4"
       },
       "models": {
         "minimax-cn/MiniMax-M2.5": {
           "alias": "Minimax"
         },
-        "openai-codex/gpt-5.3-codex": {
+        "openai-codex/gpt-5.3-codex": {},
+        "openai-codex/gpt-5.4": {
           "alias": "Codex"
         }
       },
@@ -98,23 +99,23 @@
       {
         "id": "wukong",
         "default": true,
-        "agentDir": "/Users/claw/.openclaw/agents/wukong/agent",
-        "workspace": "/Users/claw/Documents/OpenClawData/agents/wukong/workspace"
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/wukong/workspace",
+        "agentDir": "/Users/claw/.openclaw/agents/wukong/agent"
       },
       {
         "id": "taibai",
-        "agentDir": "/Users/claw/.openclaw/agents/taibai/agent",
-        "workspace": "/Users/claw/Documents/OpenClawData/agents/taibai/workspace"
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/taibai/workspace",
+        "agentDir": "/Users/claw/.openclaw/agents/taibai/agent"
       },
       {
         "id": "guanyin",
-        "agentDir": "/Users/claw/.openclaw/agents/guanyin/agent",
-        "workspace": "/Users/claw/Documents/OpenClawData/agents/guanyin/workspace"
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/guanyin/workspace",
+        "agentDir": "/Users/claw/.openclaw/agents/guanyin/agent"
       },
       {
         "id": "guichengxiang",
-        "agentDir": "/Users/claw/.openclaw/agents/guichengxiang/agent",
-        "workspace": "/Users/claw/Documents/OpenClawData/agents/guichengxiang/workspace"
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/guichengxiang/workspace",
+        "agentDir": "/Users/claw/.openclaw/agents/guichengxiang/agent"
       }
     ]
   },
@@ -339,13 +340,17 @@
   },
   "plugins": {
     "allow": [
-      "feishu"
+      "feishu",
+      "acpx"
     ],
     "slots": {
       "memory": "none"
     },
     "entries": {
       "feishu": {
+        "enabled": true
+      },
+      "acpx": {
         "enabled": true
       }
     }
