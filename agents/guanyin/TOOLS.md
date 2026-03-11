@@ -14,3 +14,4 @@
 - 可读写当前会话工件与长期画像
 - 可整理分阶段学习计划、提问链、复盘模板
 - 不默认调用无关自动化、工程、外贸技能
+- 调 `openclaw` 时，只能使用 `~/.openclaw/scripts/openclaw-safe.sh openclaw ...`。

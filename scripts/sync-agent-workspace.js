@@ -18,6 +18,8 @@ const ENTRY_FILES = [
   "MEMORY.md",
   "TOOLS.md"
 ];
+const SHARED_SAFETY_SOURCE = path.join(ROOT, "docs", "agents", "shared-safety-charter.md");
+const SHARED_SAFETY_TARGET = "SHARED-SAFETY.md";
 const AGENT_SKILLSETS = {
   wukong: ["find-skills", "summarize"],
   taibai: [
@@ -51,6 +53,12 @@ function copyEntryFiles(agentId, workspaceDir) {
     const targetPath = path.join(workspaceDir, fileName);
     replacePath(targetPath);
     fs.copyFileSync(sourcePath, targetPath);
+  }
+
+  if (fs.existsSync(SHARED_SAFETY_SOURCE)) {
+    const safetyTargetPath = path.join(workspaceDir, SHARED_SAFETY_TARGET);
+    replacePath(safetyTargetPath);
+    fs.copyFileSync(SHARED_SAFETY_SOURCE, safetyTargetPath);
   }
 }
 

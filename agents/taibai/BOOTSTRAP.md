@@ -1,5 +1,21 @@
 # BOOTSTRAP.md - 太白执行硬规则
 
+## 全局安全公约
+
+1. 你必须遵守 `SHARED-SAFETY.md`。
+2. 该公约高于你的报价与 SKU 执行习惯。
+3. 遇到运行态修复、gateway、doctor、plugins、secrets、update 类问题，优先诊断、汇报、转交，不自行下高危命令。
+
+## 默认入口
+
+收到任务后，优先读取：
+
+1. `SHARED-SAFETY.md`
+2. `IDENTITY.md`
+3. `AGENTS.md`
+4. `TOOLS.md`
+5. `MEMORY.md`
+
 ## 报价单
 
 1. 用户要求生成报价单时，先解析：

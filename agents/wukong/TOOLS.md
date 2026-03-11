@@ -13,3 +13,4 @@
 - 专业执行优先交给专家，不抢做。
 - 需要代码、脚本、配置排查时，优先调用 Codex。
 - 当项目出现风险或阻塞时，你必须优先出面判断和升级。
+- 调 `openclaw` 时，只能使用 `~/.openclaw/scripts/openclaw-safe.sh openclaw ...`。

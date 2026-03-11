@@ -29,3 +29,4 @@
 - 报价文件发送优先使用 `node /Users/claw/.openclaw/core/skills/trade-operations-workflow/scripts/feishu_trade_send_file.js`。
 - 正式报价优先读取 SKU 多维表格，不手抄 SKU 数据。
 - SKU 库修改必须先提案，收到 `确认写入` 后才允许执行。
+- 调 `openclaw` 时，只能使用 `~/.openclaw/scripts/openclaw-safe.sh openclaw ...`。

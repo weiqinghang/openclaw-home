@@ -120,9 +120,11 @@
 1. session / memory 的沉淀策略仍不够透明。  
 2. “什么内容会写入长期记忆” 还缺少稳定可见的说明。  
 3. 需要一份专门的“重测清理手册”，避免每次临时猜。
+4. 需要给 Agent 的 `openclaw` 命令增加安全包装，避免 `doctor --fix` 这类运行时修复命令把 gateway 自己打挂。
 
 ## 后续建议
 
 1. 在 OpenClaw 仓库补一份“Agent 重测清理指南”。  
 2. 给 runtime diagnostics 增加更显眼的入口文件注入状态。  
 3. 为 session / memory 清理做一个标准脚本，避免手工删漏。
+4. Agent 侧统一只使用 `scripts/openclaw-safe.sh` 调用 `openclaw`，高危命令默认转交 Codex。

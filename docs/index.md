@@ -6,6 +6,7 @@
 
 - [`operator/add-agent.md`](operator/add-agent.md)：新增 Agent 操作指引
 - [`operator/add-feishu-user.md`](operator/add-feishu-user.md)：新飞书用户接入
+- [`operator/agent-context-validation.md`](operator/agent-context-validation.md)：Agent 入口与技能白名单验证
 - [`operator/side-effect-test-reset.md`](operator/side-effect-test-reset.md)：副作用测试清场
 
 ## architecture
@@ -17,7 +18,9 @@
 ## incidents
 
 - [`incidents/agent-memory-pollution.md`](incidents/agent-memory-pollution.md)：记忆污染事故记录
+- [`incidents/agent-runtime-self-destruction.md`](incidents/agent-runtime-self-destruction.md)：Agent 自毁型运行时操作事故复盘
 
 ## agents
 
+- [`agents/shared-safety-charter.md`](agents/shared-safety-charter.md)：多 Agent 全局安全公约
 - [`agents/guichengxiang/retrospective.md`](agents/guichengxiang/retrospective.md)：龟丞相开发与验证回顾
