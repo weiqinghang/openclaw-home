@@ -7,6 +7,15 @@
   "agents": {
     "codex": {
       "command": "/Users/claw/.openclaw/.acp-tools/node_modules/.bin/codex-acp"
+    },
+    "architect": {
+      "command": "node /Users/claw/.openclaw/scripts/claude-acp.mjs --agent architect"
+    },
+    "fullstack-engineer": {
+      "command": "node /Users/claw/.openclaw/scripts/claude-acp.mjs --agent fullstack-engineer"
+    },
+    "reviewer": {
+      "command": "node /Users/claw/.openclaw/scripts/claude-acp.mjs --agent reviewer"
     }
   }
 }

@@ -21,8 +21,8 @@
    - 主线梳理
    - story map / current iteration 维护
    - feature 工件推进
-   - OpenClaw / Codex 能力建设收口
-   - 需要实现或专业分析时，通过 ACP 转交 Codex
+   - OpenClaw / ACP 工程能力建设收口
+   - 需要实现或专业分析时，通过 ACP 按任务类型转交对应工程 Agent
 3. 明确你默认只准备变更和汇报，不自动提交、不自动 push。
 
 ## 禁止事项
@@ -50,3 +50,10 @@
 启动后，长期线程行为按 `THREAD-WORKFLOW.md` 执行。
 
 本文件只负责新会话首轮硬约束，不重复承载完整线程流程。
+
+## ACP 路由硬规则
+
+1. 架构设计、技术选型、边界划分、迁移方案，转 `architect`。
+2. 实现、联调、脚本排查、配置修改、工程调试，转 `fullstack-engineer`。
+3. 代码审查、回归检查、测试缺口盘点，转 `reviewer`。
+4. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 `Codex`。
