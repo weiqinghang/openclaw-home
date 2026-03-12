@@ -7,6 +7,7 @@
 - [`operator/add-agent.md`](operator/add-agent.md)：新增 Agent 操作指引
 - [`operator/add-feishu-user.md`](operator/add-feishu-user.md)：新飞书用户接入
 - [`operator/agent-context-validation.md`](operator/agent-context-validation.md)：Agent 入口与技能白名单验证
+- [`operator/openclaw-acp-runtime-patch.md`](operator/openclaw-acp-runtime-patch.md)：OpenClaw ACP runtime 本地补丁与升级后待办
 - [`operator/side-effect-test-reset.md`](operator/side-effect-test-reset.md)：副作用测试清场
 
 ## architecture
