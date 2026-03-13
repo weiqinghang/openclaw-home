@@ -20,6 +20,14 @@ const ENTRY_FILES = [
 ];
 const SHARED_SAFETY_SOURCE = path.join(ROOT, "docs", "agents", "shared-safety-charter.md");
 const SHARED_SAFETY_TARGET = "SHARED-SAFETY.md";
+const DEFAULT_PROJECT_SKILLSET = [
+  "find-skills",
+  "summarize",
+  "spec-kit-workflow",
+  "openspec-workflow",
+  "extreme-programming"
+];
+
 const AGENT_SKILLSETS = {
   wukong: ["find-skills", "summarize"],
   "mega-product-manager": [
@@ -52,8 +60,23 @@ function replacePath(targetPath) {
   fs.rmSync(targetPath, { recursive: true, force: true });
 }
 
-function copyEntryFiles(agentId, workspaceDir) {
-  const sourceDir = path.join(ROOT, "agents", agentId);
+function resolveSourceDir(agent) {
+  if (agent.agentDir) {
+    return path.dirname(agent.agentDir);
+  }
+  return path.join(ROOT, "agents", agent.id);
+}
+
+function resolveSkillSet(agent) {
+  if (AGENT_SKILLSETS[agent.id]) return AGENT_SKILLSETS[agent.id];
+  if ((agent.agentDir || "").includes(`${path.sep}agents${path.sep}projects${path.sep}`)) {
+    return DEFAULT_PROJECT_SKILLSET;
+  }
+  return [];
+}
+
+function copyEntryFiles(agent, workspaceDir) {
+  const sourceDir = resolveSourceDir(agent);
   for (const fileName of ENTRY_FILES) {
     const sourcePath = path.join(sourceDir, fileName);
     if (!fs.existsSync(sourcePath)) continue;
@@ -69,8 +92,8 @@ function copyEntryFiles(agentId, workspaceDir) {
   }
 }
 
-function linkSkillSet(agentId, workspaceDir) {
-  const skillNames = AGENT_SKILLSETS[agentId] || [];
+function linkSkillSet(agent, workspaceDir) {
+  const skillNames = resolveSkillSet(agent);
   const skillDir = path.join(workspaceDir, "skills");
   replacePath(skillDir);
   ensureDir(skillDir);
@@ -78,7 +101,7 @@ function linkSkillSet(agentId, workspaceDir) {
   for (const skillName of skillNames) {
     const sourcePath = path.join(ROOT, "core", "skills", skillName);
     if (!fs.existsSync(sourcePath)) {
-      throw new Error(`Missing skill for ${agentId}: ${skillName}`);
+      throw new Error(`Missing skill for ${agent.id}: ${skillName}`);
     }
     const targetPath = path.join(skillDir, skillName);
     fs.symlinkSync(sourcePath, targetPath);
@@ -96,8 +119,8 @@ function main() {
     if (!selectedIds.includes(agent.id)) continue;
     const workspaceDir = agent.workspace || path.join(DATA_ROOT, "agents", agent.id, "workspace");
     ensureDir(workspaceDir);
-    copyEntryFiles(agent.id, workspaceDir);
-    linkSkillSet(agent.id, workspaceDir);
+    copyEntryFiles(agent, workspaceDir);
+    linkSkillSet(agent, workspaceDir);
     console.log(`Synced workspace for ${agent.id}: ${workspaceDir}`);
   }
 }
