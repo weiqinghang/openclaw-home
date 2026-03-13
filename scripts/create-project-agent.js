@@ -42,7 +42,9 @@ function parseArgs(argv) {
   const options = {
     groupId: "",
     projectName: "",
-    owner: "laojun"
+    owner: "laojun",
+    ownerUserId: "",
+    dryRun: false
   };
   const positional = [];
 
@@ -60,12 +62,20 @@ function parseArgs(argv) {
       options.owner = args.shift() || "laojun";
       continue;
     }
+    if (current === "--owner-user-id") {
+      options.ownerUserId = args.shift() || "";
+      continue;
+    }
+    if (current === "--dry-run") {
+      options.dryRun = true;
+      continue;
+    }
     positional.push(current);
   }
 
   const rawProjectId = positional[0] || "";
   if (!rawProjectId) {
-    fail("Usage: node scripts/create-project-agent.js <projectId> [--project-name <name>] [--group-id <id>] [--owner <agentId>]");
+    fail("Usage: node scripts/create-project-agent.js <projectId> [--project-name <name>] [--group-id <id>] [--owner <agentId>] [--owner-user-id <feishuUserId>] [--dry-run]");
   }
 
   const projectId = slugify(rawProjectId);
@@ -75,7 +85,9 @@ function parseArgs(argv) {
     projectId,
     projectName: options.projectName || rawProjectId,
     groupId: options.groupId,
-    owner: options.owner
+    owner: options.owner,
+    ownerUserId: options.ownerUserId,
+    dryRun: options.dryRun
   };
 }
 
@@ -279,9 +291,30 @@ function updateOpenClaw(agentEntry) {
   const exists = list.some((agent) => agent.id === agentEntry.id);
   if (!exists) {
     list.push(agentEntry);
-    config.agents.list = list;
-    writeJson(CONFIG_PATH, config);
   }
+
+  config.agents = config.agents || {};
+  config.agents.list = list;
+
+  const feishu = config.channels?.feishu;
+  if (feishu && agentEntry.groupId) {
+    const allow = new Set(feishu.groupAllowFrom || []);
+    allow.add(agentEntry.groupId);
+    feishu.groupAllowFrom = Array.from(allow);
+
+    const groups = feishu.groups || {};
+    const groupConfig = groups[agentEntry.groupId] || {};
+    groupConfig.requireMention = false;
+    if (agentEntry.ownerUserId) {
+      const allowFrom = new Set(groupConfig.allowFrom || []);
+      allowFrom.add(agentEntry.ownerUserId);
+      groupConfig.allowFrom = Array.from(allowFrom);
+    }
+    groups[agentEntry.groupId] = groupConfig;
+    feishu.groups = groups;
+  }
+
+  writeJson(CONFIG_PATH, config);
 }
 
 function ensureRuntimeDirs(projectId) {
@@ -302,13 +335,37 @@ function syncWorkspace(projectId) {
 }
 
 function main() {
-  const { projectId, projectName, groupId, owner } = parseArgs(process.argv.slice(2));
+  const { projectId, projectName, groupId, owner, ownerUserId, dryRun } = parseArgs(process.argv.slice(2));
   const agentRoot = path.join(ROOT, "agents", "projects", projectId);
   const workspace = path.join(DATA_ROOT, "agents", projectId, "workspace");
   const agentDir = path.join(agentRoot, "agent");
 
   if (fs.existsSync(agentRoot)) {
     fail(`Project agent already exists: ${projectId}`);
+  }
+
+  if (dryRun) {
+    console.log(JSON.stringify({
+      projectId,
+      projectName,
+      groupId,
+      owner,
+      ownerUserId,
+      actions: [
+        `create agents/projects/${projectId}/`,
+        `create projects/${projectId}/docs/`,
+        `create runtime ~/Documents/OpenClawData/agents/${projectId}/`,
+        "update ops/project-registry.json",
+        "update openclaw.json agents.list",
+        ...(groupId ? [
+          `append channels.feishu.groupAllowFrom <- ${groupId}`,
+          `set channels.feishu.groups.${groupId}.requireMention = false`,
+          ...(ownerUserId ? [`append channels.feishu.groups.${groupId}.allowFrom <- ${ownerUserId}`] : [])
+        ] : []),
+        `sync workspace for ${projectId}`
+      ]
+    }, null, 2));
+    return;
   }
 
   createProjectFiles(projectId, projectName, agentRoot);
@@ -320,6 +377,7 @@ function main() {
     projectName,
     groupId,
     owner,
+    ownerUserId,
     agentId: projectId,
     status: "active",
     workspace,
@@ -331,11 +389,20 @@ function main() {
   updateOpenClaw({
     id: projectId,
     workspace,
-    agentDir
+    agentDir,
+    groupId,
+    ownerUserId
   });
 
   syncWorkspace(projectId);
   console.log(`Created project agent: ${projectId}`);
+  if (groupId) {
+    console.log(`Feishu group enabled: ${groupId} -> requireMention=false`);
+    if (ownerUserId) {
+      console.log(`Feishu group owner allowFrom: ${ownerUserId}`);
+    }
+    console.log("Next: restart gateway or wait for config hot reload, then send a fresh group message for smoke test.");
+  }
 }
 
 main();

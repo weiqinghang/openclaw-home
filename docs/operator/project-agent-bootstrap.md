@@ -12,13 +12,13 @@
 ## 一键创建
 
 ```bash
-node scripts/create-project-agent.js <projectId> --project-name "<项目名>" --group-id "<飞书群ID>"
+node scripts/create-project-agent.js <projectId> --project-name "<项目名>" --group-id "<飞书群ID>" --owner-user-id "<飞书用户ID>"
 ```
 
 示例：
 
 ```bash
-node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group-id "oc_xxx"
+node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group-id "oc_xxx" --owner-user-id "ou_xxx"
 ```
 
 执行后会：
@@ -28,7 +28,11 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 3. 创建运行态目录
 4. 更新 `ops/project-registry.json`
 5. 更新 `openclaw.json`
-6. 自动执行 `node scripts/sync-agent-workspace.js <projectId>`
+6. 若提供 `groupId`，自动写入：
+   - `channels.feishu.groupAllowFrom`
+   - `channels.feishu.groups.<groupId>.requireMention = false`
+   - `channels.feishu.groups.<groupId>.allowFrom = [ownerUserId]`（若提供）
+7. 自动执行 `node scripts/sync-agent-workspace.js <projectId>`
 
 ## 使用规则
 
@@ -36,6 +40,34 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 2. 每个项目维护 Agent 只服务自己的项目。
 3. 软件工程类任务必须先在 `spec-kit-workflow` 与 `openspec-workflow` 中二选一。
 4. 项目维护 Agent 默认不直接绑定飞书，由共享 PM 代理对外。
+
+## 群初始化约定
+
+新项目群 bootstrap 分两层：
+
+1. 机器人级一次性初始化
+   - 飞书应用
+   - `appId/appSecret`
+   - `openclaw.json` 账号绑定
+2. 项目群级重复初始化
+   - 新群 `groupId`
+   - 新项目 `projectId`
+   - 项目 owner 的飞书 `userId`
+   - 群放行、群级免 `@`、群级 `allowFrom`
+   - 首轮群消息联调
+
+推荐命令：
+
+```bash
+node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group-id "oc_xxx" --owner-user-id "ou_xxx"
+./scripts/with-openclaw-secrets.sh openclaw gateway health
+```
+
+仅预演变更：
+
+```bash
+node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group-id "oc_xxx" --owner-user-id "ou_xxx" --dry-run
+```
 
 ## 自动化建议
 
