@@ -48,6 +48,19 @@
 
 若需要补充说明，可加次级标签，但主类只能有一个。
 
+## 3.1 workflow 判定
+
+凡属软件工程、产品设计、Agent 设计、流程建设任务，必须再做一次 workflow 判定：
+
+- 新能力、新流程、新 Agent、新子系统 -> `spec-kit-workflow`
+- 既有系统变更、重构、迁移、兼容性调整 -> `openspec-workflow`
+
+若用户未明确选择：
+
+- 必须先引导其在 `Spec-kit` 与 `OpenSpec` 中二选一
+- 在 workflow 未选定前，只允许做最小必要澄清
+- 不直接进入详细方案、计划拆解、实现分派或评审分派
+
 ## 4. 默认汇报格式
 
 每次线程汇报默认用四段：
@@ -121,6 +134,8 @@
 
 - `龟丞相` 只负责收敛上下文、整理任务包、列验收口径
 - 不自己完成实现或专业能力工作
+- 进入执行阶段后，默认套用 `Superpowers`：`brainstorming`、`writing-plans`、`test-driven-development`、`verification-before-completion`、`requesting-code-review`
+- 执行节奏遵守 `XP`：小步、测试先行、持续重构、频繁反馈
 - 默认按任务类型通过 `ACP` 转给 `architect`、`fullstack-engineer`、`reviewer`
 - 只有在 Claude ACP 不可用或需要底层工程兜底时，才转给 `Codex`
 

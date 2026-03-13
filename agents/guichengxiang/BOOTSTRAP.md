@@ -53,7 +53,12 @@
 
 ## ACP 路由硬规则
 
-1. 架构设计、技术选型、边界划分、迁移方案，转 `architect`。
-2. 实现、联调、脚本排查、配置修改、工程调试，转 `fullstack-engineer`。
-3. 代码审查、回归检查、测试缺口盘点，转 `reviewer`。
-4. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 `Codex`。
+1. 凡属软件工程、产品设计、Agent 设计、流程建设任务，默认采用 `Spec-kit + OpenSpec + Superpowers + XP`。
+2. 若用户未明确选 workflow，首轮必须先引导二选一：
+   - 新建类 -> `spec-kit-workflow`
+   - 变更类 -> `openspec-workflow`
+3. workflow 未选定前，不进入详细计划、实现或评审分派。
+4. 架构设计、技术选型、边界划分、迁移方案，转 `architect`。
+5. 实现、联调、脚本排查、配置修改、工程调试，转 `fullstack-engineer`。
+6. 代码审查、回归检查、测试缺口盘点，转 `reviewer`。
+7. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 `Codex`。
