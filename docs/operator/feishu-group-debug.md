@@ -39,6 +39,26 @@
 
 ### 允许群接入
 
+**关键经验：Feishu 多账号模式下，优先检查账号级配置。**
+
+也就是：
+
+- `channels.feishu.accounts.laojun.groupPolicy`
+- `channels.feishu.accounts.laojun.groupAllowFrom`
+- `channels.feishu.accounts.laojun.groups.<groupId>`
+
+不要只看顶层 `channels.feishu.*`。
+
+这次实际根因就是：
+
+1. 顶层 `channels.feishu.groupAllowFrom` 已写入新群
+2. 日志也出现了 `config hot reload applied`
+3. 但运行时仍报：
+   - `group oc_xxx not in groupAllowFrom (groupPolicy=allowlist)`
+4. 最终确认：多账号 Feishu 运行时读的是 `channels.feishu.accounts.<accountId>`，不是顶层
+
+### 顶层单账号写法
+
 若使用 allowlist：
 
 ```json
@@ -81,6 +101,29 @@ group oc_xxx not in groupAllowFrom (groupPolicy=allowlist)
 
 - `requireMention: false`：这个群里不必 `@`
 - `allowFrom`：只允许指定用户直接触发，避免群噪音
+
+### 多账号 Feishu 正确写法
+
+```json
+{
+  "channels": {
+    "feishu": {
+      "accounts": {
+        "laojun": {
+          "groupPolicy": "allowlist",
+          "groupAllowFrom": ["oc_xxx"],
+          "groups": {
+            "oc_xxx": {
+              "requireMention": false,
+              "allowFrom": ["ou_xxx"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 ## 3. 会话与 dedup 层
 
@@ -159,6 +202,8 @@ agent:<agentId>:feishu:group:<chat_id>
 3. 群策略、mention gating、dedup、显示层是四个独立问题
 4. 先看日志有没有 `received message`，能最快切分“飞书没投递”还是“OpenClaw 没处理”
 5. 飞书群如果要做“1 群 = 1 项目 = 1 会话”，建议：
-   - `requireMention: false`
-   - `allowFrom` 只放项目 owner
+   - 对应账号下 `groupPolicy = "allowlist"`
+   - 对应账号下 `groupAllowFrom += groupId`
+   - 对应账号下 `groups.<groupId>.requireMention = false`
+   - 对应账号下 `groups.<groupId>.allowFrom` 只放项目 owner
    - 共享 PM 作为唯一对外入口

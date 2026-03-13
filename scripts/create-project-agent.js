@@ -297,12 +297,16 @@ function updateOpenClaw(agentEntry) {
   config.agents.list = list;
 
   const feishu = config.channels?.feishu;
-  if (feishu && agentEntry.groupId) {
-    const allow = new Set(feishu.groupAllowFrom || []);
+  const feishuAccount = feishu?.accounts?.[agentEntry.owner] || feishu;
+  if (feishuAccount && agentEntry.groupId) {
+    const allow = new Set(feishuAccount.groupAllowFrom || []);
     allow.add(agentEntry.groupId);
-    feishu.groupAllowFrom = Array.from(allow);
+    feishuAccount.groupAllowFrom = Array.from(allow);
+    if (!feishuAccount.groupPolicy) {
+      feishuAccount.groupPolicy = feishu?.groupPolicy || "allowlist";
+    }
 
-    const groups = feishu.groups || {};
+    const groups = feishuAccount.groups || {};
     const groupConfig = groups[agentEntry.groupId] || {};
     groupConfig.requireMention = false;
     if (agentEntry.ownerUserId) {
@@ -311,7 +315,7 @@ function updateOpenClaw(agentEntry) {
       groupConfig.allowFrom = Array.from(allowFrom);
     }
     groups[agentEntry.groupId] = groupConfig;
-    feishu.groups = groups;
+    feishuAccount.groups = groups;
   }
 
   writeJson(CONFIG_PATH, config);
@@ -391,7 +395,8 @@ function main() {
     workspace,
     agentDir,
     groupId,
-    ownerUserId
+    ownerUserId,
+    owner
   });
 
   syncWorkspace(projectId);

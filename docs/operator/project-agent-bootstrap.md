@@ -29,9 +29,9 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 4. 更新 `ops/project-registry.json`
 5. 更新 `openclaw.json`
 6. 若提供 `groupId`，自动写入：
-   - `channels.feishu.groupAllowFrom`
-   - `channels.feishu.groups.<groupId>.requireMention = false`
-   - `channels.feishu.groups.<groupId>.allowFrom = [ownerUserId]`（若提供）
+   - `channels.feishu.accounts.<owner>.groupAllowFrom`
+   - `channels.feishu.accounts.<owner>.groups.<groupId>.requireMention = false`
+   - `channels.feishu.accounts.<owner>.groups.<groupId>.allowFrom = [ownerUserId]`（若提供）
 7. 自动执行 `node scripts/sync-agent-workspace.js <projectId>`
 
 ## 使用规则
@@ -78,3 +78,31 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 1. 此时更容易拿到项目名、目标、owner、范围
 2. 可顺手完成群 `groupId -> projectId` 绑定
 3. 避免为无效群或闲聊群滥建项目 Agent
+
+## 关键经验
+
+如果是 **Feishu 多账号模式**，群配置必须写到账号级：
+
+```json
+{
+  "channels": {
+    "feishu": {
+      "accounts": {
+        "laojun": {
+          "groupPolicy": "allowlist",
+          "groupAllowFrom": ["oc_xxx"],
+          "groups": {
+            "oc_xxx": {
+              "requireMention": false,
+              "allowFrom": ["ou_xxx"]
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+不要只写顶层 `channels.feishu.groupAllowFrom/groups`。  
+在多账号模式下，运行时会优先读 `channels.feishu.accounts.<accountId>`。
