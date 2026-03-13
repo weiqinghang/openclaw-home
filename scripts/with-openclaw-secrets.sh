@@ -20,6 +20,7 @@ feishu_wukong_app_secret="$(jq -r '.channels.feishu.accounts.wukong.appSecret //
 feishu_taibai_app_secret="$(jq -r '.channels.feishu.accounts.taibai.appSecret // empty' "$SECRETS_FILE")"
 feishu_guanyin_app_secret="$(jq -r '.channels.feishu.accounts.guanyin.appSecret // empty' "$SECRETS_FILE")"
 feishu_guichengxiang_app_secret="$(jq -r '.channels.feishu.accounts.guichengxiang.appSecret // empty' "$SECRETS_FILE")"
+feishu_laojun_app_secret="$(jq -r '.channels.feishu.accounts.laojun.appSecret // empty' "$SECRETS_FILE")"
 
 if [ -z "$gateway_token" ]; then
   echo "Missing .runtime.OPENCLAW_GATEWAY_TOKEN in $SECRETS_FILE" >&2
@@ -31,7 +32,7 @@ if [ -z "$minimax_api_key" ]; then
   exit 1
 fi
 
-if [ -z "$feishu_wukong_app_secret" ] || [ -z "$feishu_taibai_app_secret" ] || [ -z "$feishu_guanyin_app_secret" ] || [ -z "$feishu_guichengxiang_app_secret" ]; then
+if [ -z "$feishu_wukong_app_secret" ] || [ -z "$feishu_taibai_app_secret" ] || [ -z "$feishu_guanyin_app_secret" ] || [ -z "$feishu_guichengxiang_app_secret" ] || [ -z "$feishu_laojun_app_secret" ]; then
   echo "Missing Feishu appSecret in $SECRETS_FILE" >&2
   exit 1
 fi
@@ -42,5 +43,6 @@ export FEISHU_WUKONG_APP_SECRET="$feishu_wukong_app_secret"
 export FEISHU_TAIBAI_APP_SECRET="$feishu_taibai_app_secret"
 export FEISHU_GUANYIN_APP_SECRET="$feishu_guanyin_app_secret"
 export FEISHU_GUICHENGXIANG_APP_SECRET="$feishu_guichengxiang_app_secret"
+export FEISHU_LAOJUN_APP_SECRET="$feishu_laojun_app_secret"
 
 exec "$@"

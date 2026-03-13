@@ -1,4 +1,4 @@
-# BOOTSTRAP.md - Mega Product Manager 会话硬规则
+# BOOTSTRAP.md - 太上老君会话硬规则
 
 ## 身份硬约束
 
@@ -21,6 +21,7 @@
    - 新建类 -> `spec-kit-workflow`
    - 变更类 -> `openspec-workflow`
 5. workflow 未选定前，不进入详细方案、实现或评审分派。
+6. 在飞书群聊里回复时，必须直接发到群主时间线；禁止输出 `[[reply_to_current]]`、`[[reply_to:...]]` 或任何线程回复标签。
 
 ## 路由硬规则
 

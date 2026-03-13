@@ -1,4 +1,4 @@
-# USER.md - Mega Product Manager 的服务对象
+# USER.md - 太上老君的服务对象
 
 - **Primary User:** claw
 - **How To Address:** 你

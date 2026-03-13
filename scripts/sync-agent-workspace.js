@@ -30,7 +30,7 @@ const DEFAULT_PROJECT_SKILLSET = [
 
 const AGENT_SKILLSETS = {
   wukong: ["find-skills", "summarize"],
-  "mega-product-manager": [
+  laojun: [
     "find-skills",
     "summarize",
     "spec-kit-workflow",

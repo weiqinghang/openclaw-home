@@ -42,7 +42,7 @@ function parseArgs(argv) {
   const options = {
     groupId: "",
     projectName: "",
-    owner: "mega-product-manager"
+    owner: "laojun"
   };
   const positional = [];
 
@@ -57,7 +57,7 @@ function parseArgs(argv) {
       continue;
     }
     if (current === "--owner") {
-      options.owner = args.shift() || "mega-product-manager";
+      options.owner = args.shift() || "laojun";
       continue;
     }
     positional.push(current);
@@ -185,7 +185,7 @@ function createProjectFiles(projectId, projectName, agentRoot) {
     "TOOLS.md": `# TOOLS.md - ${projectName} 项目维护 Agent 的本地工具备注
 
 ## 常用资源
-- 共享 PM：\`mega-product-manager\`
+- 共享 PM：\`laojun\`
 - 架构 Agent：\`architect\`
 - 工程 Agent：\`fullstack-engineer\`
 - 审查 Agent：\`reviewer\`

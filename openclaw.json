@@ -103,9 +103,9 @@
         "agentDir": "/Users/claw/.openclaw/agents/wukong/agent"
       },
       {
-        "id": "mega-product-manager",
-        "workspace": "/Users/claw/Documents/OpenClawData/agents/mega-product-manager/workspace",
-        "agentDir": "/Users/claw/.openclaw/agents/mega-product-manager/agent"
+        "id": "laojun",
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/laojun/workspace",
+        "agentDir": "/Users/claw/.openclaw/agents/laojun/agent"
       },
       {
         "id": "taibai",
@@ -144,6 +144,13 @@
     }
   },
   "bindings": [
+    {
+      "agentId": "laojun",
+      "match": {
+        "channel": "feishu",
+        "accountId": "laojun"
+      }
+    },
     {
       "agentId": "wukong",
       "match": {
@@ -298,7 +305,8 @@
       "connectionMode": "websocket",
       "groupPolicy": "allowlist",
       "groupAllowFrom": [
-        "ou_127b9bf41eae8201c7b6062bca18b0ec"
+        "ou_127b9bf41eae8201c7b6062bca18b0ec",
+        "oc_80b74bf98481131ff1fc8c1b1308d0dd"
       ],
       "requireMention": true,
       "userAllowlist": [
@@ -320,6 +328,18 @@
         "guichengxiang": {
           "appId": "cli_a92b7a062579dcc2",
           "appSecret": "${FEISHU_GUICHENGXIANG_APP_SECRET}"
+        },
+        "laojun": {
+          "appId": "cli_a92b7bfc0bb8dbc8",
+          "appSecret": "${FEISHU_LAOJUN_APP_SECRET}"
+        }
+      },
+      "groups": {
+        "oc_80b74bf98481131ff1fc8c1b1308d0dd": {
+          "requireMention": false,
+          "allowFrom": [
+            "ou_d14f52a10cdf41c0420c59a273ccad61"
+          ]
         }
       }
     }

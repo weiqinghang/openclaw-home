@@ -1,4 +1,4 @@
-# TOOLS.md - Mega Product Manager 的本地工具备注
+# TOOLS.md - 太上老君的本地工具备注
 
 ## 常用资源
 - 项目专属 Agent：`agents/projects/<projectId>/...`
@@ -19,3 +19,4 @@
 - 需要代码审查、回归检查、测试缺口盘点时，优先调用 `reviewer`。
 - Claude ACP 链路不可用或需要更稳的底层仓库执行时，再调用 Codex。
 - 调 `openclaw` 时，只能使用 `~/.openclaw/scripts/openclaw-safe.sh openclaw ...`。
+- 飞书群聊默认走主流发言，不走 reply/tagged reply。
