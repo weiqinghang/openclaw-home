@@ -212,16 +212,6 @@
         "taibai-workflow": {
           "enabled": true
         },
-        "laojun-group-bootstrap": {
-          "enabled": true,
-          "config": {
-            "agentId": "laojun",
-            "ownerUserId": "ou_d14f52a10cdf41c0420c59a273ccad61",
-            "statePath": "/Users/claw/.openclaw/ops/laojun-group-bootstrap-pending.json",
-            "secretWrapper": "/Users/claw/.openclaw/scripts/with-openclaw-secrets.sh",
-            "createProjectScript": "/Users/claw/.openclaw/scripts/create-project-agent.js"
-          }
-        },
         "user-permissions": {
           "enabled": true,
           "config": {
