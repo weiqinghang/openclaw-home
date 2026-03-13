@@ -103,6 +103,11 @@
         "agentDir": "/Users/claw/.openclaw/agents/wukong/agent"
       },
       {
+        "id": "mega-product-manager",
+        "workspace": "/Users/claw/Documents/OpenClawData/agents/mega-product-manager/workspace",
+        "agentDir": "/Users/claw/.openclaw/agents/mega-product-manager/agent"
+      },
+      {
         "id": "taibai",
         "workspace": "/Users/claw/Documents/OpenClawData/agents/taibai/workspace",
         "agentDir": "/Users/claw/.openclaw/agents/taibai/agent"

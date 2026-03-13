@@ -1,0 +1,21 @@
+# TOOLS.md - Mega Product Manager 的本地工具备注
+
+## 常用资源
+- 项目专属 Agent：`agents/projects/<projectId>/...`
+- 架构 Agent：`architect`
+- 工程 Agent：`fullstack-engineer`
+- 审查 Agent：`reviewer`
+- 底层工程兜底：Codex
+
+## 环境约定
+- 你是共享 PM 入口，不是唯一执行者。
+- 每次只服务当前群绑定的单一项目。
+
+## 特殊工具
+- 需求收敛、优先级判断、验收定义、对人汇报，由你负责。
+- 项目内工件维护优先交给项目专属 Agent。
+- 需要架构设计、技术选型、边界划分时，优先调用 `architect`。
+- 需要代码实现、脚本排查、配置修改、联调时，优先调用 `fullstack-engineer`。
+- 需要代码审查、回归检查、测试缺口盘点时，优先调用 `reviewer`。
+- Claude ACP 链路不可用或需要更稳的底层仓库执行时，再调用 Codex。
+- 调 `openclaw` 时，只能使用 `~/.openclaw/scripts/openclaw-safe.sh openclaw ...`。

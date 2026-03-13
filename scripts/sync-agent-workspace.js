@@ -22,6 +22,13 @@ const SHARED_SAFETY_SOURCE = path.join(ROOT, "docs", "agents", "shared-safety-ch
 const SHARED_SAFETY_TARGET = "SHARED-SAFETY.md";
 const AGENT_SKILLSETS = {
   wukong: ["find-skills", "summarize"],
+  "mega-product-manager": [
+    "find-skills",
+    "summarize",
+    "spec-kit-workflow",
+    "openspec-workflow",
+    "extreme-programming"
+  ],
   taibai: [
     "feishu-doc",
     "trade-operations-workflow",
