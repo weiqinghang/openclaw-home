@@ -36,10 +36,10 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 
 ## 使用规则
 
-1. 共享 PM `laojun`（昵称太上老君）负责对外接活。
+1. 首席产品官 `laojun`（昵称太上老君）负责对外接活、产品收敛与项目初始化。
 2. 每个项目维护 Agent 只服务自己的项目。
 3. 软件工程类任务必须先在 `spec-kit-workflow` 与 `openspec-workflow` 中二选一。
-4. 项目维护 Agent 默认不直接绑定飞书，由共享 PM 代理对外。
+4. 项目维护 Agent 默认不直接绑定飞书，由首席产品官代理对外。
 
 ## 群初始化约定
 

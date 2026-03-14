@@ -28,4 +28,5 @@
 ## agents
 
 - [`agents/shared-safety-charter.md`](agents/shared-safety-charter.md)：多 Agent 全局安全公约
+- [`agents/laojun/usage.md`](agents/laojun/usage.md)：太上老君作为首席产品官入口的使用说明
 - [`agents/guichengxiang/retrospective.md`](agents/guichengxiang/retrospective.md)：龟丞相开发与验证回顾

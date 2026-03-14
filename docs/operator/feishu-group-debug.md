@@ -206,4 +206,4 @@ agent:<agentId>:feishu:group:<chat_id>
    - 对应账号下 `groupAllowFrom += groupId`
    - 对应账号下 `groups.<groupId>.requireMention = false`
    - 对应账号下 `groups.<groupId>.allowFrom` 只放项目 owner
-   - 共享 PM 作为唯一对外入口
+   - 首席产品官作为唯一对外入口

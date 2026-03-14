@@ -146,10 +146,12 @@ node scripts/sync-agent-workspace.js
 - `taibai`：外贸专家太白金星
 - `guanyin`：观音菩萨
 - `guichengxiang`：归程象
+- `laojun`：首席产品官入口，负责项目群接活、产品收敛、项目初始化与协调员编排；有产研需求的人可保留并绑定
 
 ## 操作指引
 
 - 文档入口：[`docs/index.md`](docs/index.md)
+- 老君使用说明：[`docs/agents/laojun/usage.md`](docs/agents/laojun/usage.md)
 - 公共发行/作者实例边界：[`docs/operator/public-distribution-boundary.md`](docs/operator/public-distribution-boundary.md)
 - 新增 Agent：[`docs/operator/add-agent.md`](docs/operator/add-agent.md)
 - 新飞书用户接入：[`docs/operator/add-feishu-user.md`](docs/operator/add-feishu-user.md)

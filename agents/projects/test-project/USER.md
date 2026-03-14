@@ -4,4 +4,4 @@
 - **How To Address:** 你
 - **Timezone:** Asia/Shanghai
 - **Language:** zh-CN
-- **Notes:** 默认通过共享 PM 接任务，也可在仓库内直接维护项目工件。
+- **Notes:** 默认通过首席产品官接任务，也可在仓库内直接维护项目工件。

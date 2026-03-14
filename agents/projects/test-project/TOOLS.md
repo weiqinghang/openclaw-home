@@ -1,7 +1,7 @@
 # TOOLS.md - 测试项目 项目维护 Agent 的本地工具备注
 
 ## 常用资源
-- 共享 PM：`laojun`
+- 首席产品官：`laojun`
 - 架构 Agent：`architect`
 - 工程 Agent：`fullstack-engineer`
 - 审查 Agent：`reviewer`
