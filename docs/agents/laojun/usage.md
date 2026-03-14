@@ -109,6 +109,7 @@
 4. 项目专属协调员已创建
 5. 项目文档和工件目录已落地
 6. 老君能够持续汇报当前状态、下一步、风险与待拍板项
+7. 遇到 UI/UX、页面、原型需求时，老君能先收敛需求，再把任务路由给 Codex 并回传交付物
 
 ## 常见异常
 
@@ -136,8 +137,17 @@
 2. 项目文档目录还没落地
 3. 老君还没把任务交给项目协调员和专家 Agent
 
+### 老君接住 UI 需求，但没有原型或截图交付
+
+常见原因：
+
+1. 没补齐页面范围、用户路径、风格参考
+2. 还没把任务路由给 Codex
+3. 项目目录下没有使用 `design/`、`prototype/`、`docs/design/` 作为落点
+
 ## 相关文档
 
 1. [`docs/operator/project-agent-bootstrap.md`](/Users/claw/.openclaw/docs/operator/project-agent-bootstrap.md)
 2. [`docs/operator/feishu-group-debug.md`](/Users/claw/.openclaw/docs/operator/feishu-group-debug.md)
 3. [`agents/laojun/AGENTS.md`](/Users/claw/.openclaw/agents/laojun/AGENTS.md)
+4. [`docs/operator/laojun-ui-delivery.md`](/Users/claw/.openclaw/docs/operator/laojun-ui-delivery.md)

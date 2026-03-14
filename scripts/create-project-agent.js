@@ -263,6 +263,9 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 function ensureProjectDocs(projectId, projectRoot) {
   const docsRoot = path.join(projectRoot, "docs");
   ensureDir(docsRoot);
+  ensureDir(path.join(docsRoot, "design"));
+  ensureDir(path.join(projectRoot, "design"));
+  ensureDir(path.join(projectRoot, "prototype"));
 
   const docs = {
     "index.md": `# ${projectId} 项目索引
@@ -302,11 +305,33 @@ function ensureProjectDocs(projectId, projectRoot) {
     "decisions.md": `# ${projectId} Decisions
 `,
     "risks.md": `# ${projectId} Risks
+`,
+    "design/README.md": `# ${projectId} Design Notes
+
+- 在这里记录页面目标、风格方向、设计说明、截图索引与待确认项。
 `
   };
 
   for (const [name, content] of Object.entries(docs)) {
     const filePath = path.join(docsRoot, name);
+    if (!fs.existsSync(filePath)) {
+      fs.writeFileSync(filePath, content);
+    }
+  }
+
+  const topLevelFiles = {
+    "design/README.md": `# ${projectId} Design Assets
+
+- 放设计源文件、导出的素材、Figma 对应说明。
+`,
+    "prototype/README.md": `# ${projectId} Interactive Prototype
+
+- 放可交互原型、页面快照、演示入口。
+`
+  };
+
+  for (const [name, content] of Object.entries(topLevelFiles)) {
+    const filePath = path.join(projectRoot, name);
     if (!fs.existsSync(filePath)) {
       fs.writeFileSync(filePath, content);
     }

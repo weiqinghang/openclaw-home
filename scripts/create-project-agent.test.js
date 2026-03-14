@@ -184,6 +184,9 @@ test("creates a new project under externalized project root with externalized ru
   assert.equal(project.branchName, "");
   assert.ok(fs.existsSync(path.join(projectRoot, "agent", "AGENTS.md")));
   assert.ok(fs.existsSync(path.join(projectRoot, "docs", "prd.md")));
+  assert.ok(fs.existsSync(path.join(projectRoot, "docs", "design", "README.md")));
+  assert.ok(fs.existsSync(path.join(projectRoot, "design", "README.md")));
+  assert.ok(fs.existsSync(path.join(projectRoot, "prototype", "README.md")));
   assert.ok(fs.existsSync(path.join(runtimeRoot, "workspace", "AGENTS.md")));
 
   const config = readJson(path.join(rootDir, "openclaw.json"));

@@ -7,6 +7,9 @@
 - 项目根目录：`~/Documents/OpenClawData/projects/<projectId>/`
 - 项目 Agent 静态资产：`~/Documents/OpenClawData/projects/<projectId>/agent/`
 - 项目文档与开发工件：`~/Documents/OpenClawData/projects/<projectId>/docs/`
+- 设计说明：`~/Documents/OpenClawData/projects/<projectId>/docs/design/`
+- 设计源文件：`~/Documents/OpenClawData/projects/<projectId>/design/`
+- 可交互原型：`~/Documents/OpenClawData/projects/<projectId>/prototype/`
 - 项目 Agent 运行态：`~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/`
 - 注册表：`ops/project-registry.json`
 
@@ -26,14 +29,15 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 
 1. 创建 `~/Documents/OpenClawData/projects/<projectId>/agent/` 静态资产
 2. 创建 `~/Documents/OpenClawData/projects/<projectId>/docs/` 基础工件
-3. 创建 `~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/` 运行态
-4. 更新 `ops/project-registry.json`
-5. 更新 `openclaw.json`
-6. 若提供 `groupId`，自动写入：
+3. 创建 `~/Documents/OpenClawData/projects/<projectId>/docs/design/`、`design/`、`prototype/`
+4. 创建 `~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/` 运行态
+5. 更新 `ops/project-registry.json`
+6. 更新 `openclaw.json`
+7. 若提供 `groupId`，自动写入：
    - `channels.feishu.accounts.<owner>.groupAllowFrom`
    - `channels.feishu.accounts.<owner>.groups.<groupId>.requireMention = false`
    - `channels.feishu.accounts.<owner>.groups.<groupId>.allowFrom = [ownerUserId]`（若提供）
-7. 自动执行 `node scripts/sync-agent-workspace.js <projectId>`
+8. 自动执行 `node scripts/sync-agent-workspace.js <projectId>`
 
 ## 仓库接入模式
 

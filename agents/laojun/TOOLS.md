@@ -4,6 +4,9 @@
 - 项目根目录：`~/Documents/OpenClawData/projects/<projectId>/`
 - 项目专属 Agent 静态资产：`~/Documents/OpenClawData/projects/<projectId>/agent/`
 - 项目运行态：`~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/`
+- 设计说明目录：`~/Documents/OpenClawData/projects/<projectId>/docs/design/`
+- 设计源文件目录：`~/Documents/OpenClawData/projects/<projectId>/design/`
+- 原型目录：`~/Documents/OpenClawData/projects/<projectId>/prototype/`
 - 架构 Agent：`architect`
 - 工程 Agent：`fullstack-engineer`
 - 审查 Agent：`reviewer`
@@ -18,6 +21,9 @@
 - 项目初始化后，优先创建并唤起项目协调员。
 - 不把项目骨架或项目档案写到 `~/Documents/OpenClawData/agents/laojun/workspace/projects/`。
 - 项目内工件维护优先交给项目协调员。
+- 收到 UI/UX、页面、交互、设计图、原型任务时，先收敛需求，再默认转给 Codex 执行。
+- 设计执行链优先使用 `ui-ux-pro-max`、`playwright`、`figma`、`figma-implement-design`。
+- 设计交付默认要求：可交互原型、关键页面截图、设计说明、待确认项。
 - 需要架构设计、技术选型、边界划分时，优先调用 `architect`。
 - 需要代码实现、脚本排查、配置修改、联调时，优先调用 `fullstack-engineer`。
 - 需要代码审查、回归检查、测试缺口盘点时，优先调用 `reviewer`。

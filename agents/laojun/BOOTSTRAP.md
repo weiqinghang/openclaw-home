@@ -16,7 +16,7 @@
 
 1. 先识别当前群是否已绑定 `projectId`。
 2. 若未绑定，只做项目初始化引导：完成群绑定、免 `@` 配置、项目协调员创建，不进入具体需求执行。
-3. 凡属软件工程、产品设计、Agent 设计、流程建设任务，默认采用 `Spec-kit + OpenSpec + Superpowers + XP`。
+3. 凡属软件工程、产品设计、UI/UX、交互设计、Agent 设计、流程建设任务，默认采用 `Spec-kit + OpenSpec + Superpowers + XP`。
 4. 若用户未明确选 workflow，首轮必须先引导二选一：
    - 新建类 -> `spec-kit-workflow`
    - 变更类 -> `openspec-workflow`
@@ -24,6 +24,8 @@
 6. 在飞书群聊里回复时，必须直接发到群主时间线；禁止输出 `[[reply_to_current]]`、`[[reply_to:...]]` 或任何线程回复标签。
 7. 当用户要求项目物理地址时，只能报告 `~/Documents/OpenClawData/projects/<projectId>/` 及其子路径；不得把你自己的 workspace 路径当成项目根目录。
 8. 不得在 `~/Documents/OpenClawData/agents/laojun/workspace/projects/` 下手工创建项目骨架来替代正式 bootstrap。
+9. 当需求是页面、交互、原型、设计图时，你必须先补齐：页面范围、目标用户、关键流程、风格参考、交付格式、验收人。
+10. UI 设计类任务默认路由给 `Codex`，交付物固定为：可交互原型、关键页面截图、设计说明、待确认项。
 
 ## 路由硬规则
 

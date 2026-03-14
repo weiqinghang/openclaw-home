@@ -7,6 +7,7 @@ const os = require("node:os");
 
 const HOME = os.homedir();
 const ROOT = path.join(HOME, ".openclaw");
+const CODEX_HOME = process.env.CODEX_HOME || path.join(HOME, ".codex");
 const DATA_ROOT = path.join(HOME, "Documents", "OpenClawData");
 const ENTRY_FILES = [
   "AGENTS.md",
@@ -20,6 +21,11 @@ const ENTRY_FILES = [
 ];
 const SHARED_SAFETY_SOURCE = path.join(ROOT, "docs", "agents", "shared-safety-charter.md");
 const SHARED_SAFETY_TARGET = "SHARED-SAFETY.md";
+const SKILL_ROOTS = [
+  path.join(ROOT, "core", "skills"),
+  path.join(CODEX_HOME, "skills"),
+  path.join(CODEX_HOME, "superpowers", "skills")
+];
 const DEFAULT_PROJECT_SKILLSET = [
   "find-skills",
   "summarize",
@@ -35,7 +41,11 @@ const AGENT_SKILLSETS = {
     "summarize",
     "spec-kit-workflow",
     "openspec-workflow",
-    "extreme-programming"
+    "extreme-programming",
+    "ui-ux-pro-max",
+    "playwright",
+    "figma",
+    "figma-implement-design"
   ],
   taibai: ["trade-operations-workflow"],
   guanyin: [],
@@ -102,8 +112,10 @@ function linkSkillSet(agent, workspaceDir) {
   ensureDir(skillDir);
 
   for (const skillName of skillNames) {
-    const sourcePath = path.join(ROOT, "core", "skills", skillName);
-    if (!fs.existsSync(sourcePath)) {
+    const sourcePath = SKILL_ROOTS
+      .map((rootDir) => path.join(rootDir, skillName))
+      .find((candidate) => fs.existsSync(candidate));
+    if (!sourcePath) {
       throw new Error(`Missing skill for ${agent.id}: ${skillName}`);
     }
     const targetPath = path.join(skillDir, skillName);
