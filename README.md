@@ -6,6 +6,22 @@
 
 如果你要把这个仓库整合进你自己的 `.openclaw`，先走这条最小路径。
 
+**最重要的规则：一定要让你的 Coding Agent 接管，不要自作主张手改一堆配置。**
+
+这个仓库的目标不是让人类自己慢慢琢磨，而是让你的 Coding Agent：
+
+1. 识别公共模板与实例边界
+2. 生成你自己的本地实例文件
+3. 填入必要 secrets
+4. 跑最小验收
+
+人类最好只提供：
+
+- 你的本机用户名
+- 你的飞书 user id
+- 你的飞书 app id
+- 你的 secrets
+
 ### 1. 准备本地仓库
 
 把仓库放到你自己的 `~/.openclaw`：
@@ -22,20 +38,30 @@ cd ~/.openclaw
 - `openclaw.template.json`：公共模板，给新环境起步
 - `openclaw.json`：作者当前实例配置，不应直接照搬到你的机器
 
-首次接入时，先用模板生成你自己的本地配置：
+首次接入时，不要手工复制后再到处改。  
+优先让你的 Coding Agent 执行初始化脚本：
 
 ```bash
-cp openclaw.template.json openclaw.json
-cp secrets.local.example.json secrets.local.json
+node scripts/init-local-instance.js \
+  --user-name "$(basename "$HOME")" \
+  --feishu-user-id "<your-feishu-user-id>" \
+  --feishu-app-id "<your-feishu-app-id>" \
+  --force
 ```
 
-然后按你的机器环境修改：
+这个脚本会：
 
-- `openclaw.json` 里的 `yourname`
-- `your-feishu-app-id`
-- `your-feishu-user-id`
-- 数据根目录
-- 你实际启用的 Feishu 账号
+- 从 `openclaw.template.json` 生成本地 `openclaw.json`
+- 从 `secrets.local.example.json` 生成本地 `secrets.local.json`
+- 备份仓库里原有的 `openclaw.json`
+- 按你的本机用户名替换默认路径
+- 写入你传入的飞书 user id / app id
+
+如果你的 Coding Agent 需要更细控制，还可以额外传：
+
+- `--root-dir`
+- `--home-dir`
+- `--data-root`
 
 ### 3. 准备运行时目录
 
@@ -58,14 +84,22 @@ node scripts/set-data-root.js /你的/绝对路径
 - `secrets.local.example.json` 提供的是最小发行版示例
 - `laojun` 是可选账号；只有你在配置里启用它时，才需要填写对应 secret
 - `scripts/with-openclaw-secrets.sh` 会按 `secrets.local.json` 中实际存在的账号动态注入环境变量
+- 这一步仍建议由你的 Coding Agent 继续完成，而不是人类直接改完整配置
 
 ### 5. 做最小验证
 
 ```bash
+node scripts/check-local-instance.js
 ./scripts/with-openclaw-secrets.sh openclaw config validate --json
 ./scripts/with-openclaw-secrets.sh openclaw models list
 ./scripts/with-openclaw-secrets.sh openclaw gateway health
 ```
+
+建议顺序：
+
+1. 先让你的 Coding Agent 运行 `node scripts/check-local-instance.js`
+2. 再运行 `openclaw` 相关验证命令
+3. 只有这两层都通过，才算接管成功
 
 如果要同步 workspace 入口文件与技能白名单，再执行：
 
