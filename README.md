@@ -8,6 +8,8 @@
 
 **最重要的规则：一定要让你的 Coding Agent 接管，不要自作主张手改一堆配置。**
 
+如果你是首次 clone 本项目，建议直接把这句话发给你的 Coding Agent：`我首次使用该项目，请先完成初始化，再指引我如何使用。`
+
 这个仓库的目标不是让人类自己慢慢琢磨，而是让你的 Coding Agent：
 
 1. 识别公共模板与实例边界
@@ -145,7 +147,7 @@ node scripts/sync-agent-workspace.js
 - `wukong`：万能管家悟空
 - `taibai`：外贸专家太白金星
 - `guanyin`：观音菩萨
-- `guichengxiang`：归程象
+- `guichengxiang`：龟丞相
 - `laojun`：首席产品官入口，负责项目群接活、产品收敛、项目初始化与协调员编排；有产研需求的人可保留并绑定
 
 说明：
@@ -283,7 +285,7 @@ node scripts/sync-agent-workspace.js wukong guanyin
 - `wukong` -> 万能管家悟空
 - `taibai` -> 外贸专家太白金星
 - `guanyin` -> 观音菩萨
-- `guichengxiang` -> 归程象
+- `guichengxiang` -> 龟丞相
 
 当前判断：
 
