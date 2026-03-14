@@ -112,6 +112,8 @@ node scripts/sync-agent-workspace.js
 仓库里被追踪的 `openclaw.json` 仍是作者本人正在使用的实例配置。  
 你应把它视为**运行中样例**，不是公共默认配置。
 
+如果你的场景不需要作者自带的个人 Agent 资产，也可以在初始化完成后让你的 Coding Agent 按需执行**一键裁剪**，仅保留你自己要绑定、启用或继续维护的部分。
+
 ## 当前能力
 
 - 多飞书 App 对应多 Agent
