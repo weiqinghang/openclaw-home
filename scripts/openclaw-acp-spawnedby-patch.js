@@ -2,16 +2,61 @@
 
 const fs = require("fs");
 const path = require("path");
-
-const targets = [
-  "/opt/homebrew/lib/node_modules/openclaw/dist/gateway-cli-C2ZZYgwu.js",
-  "/opt/homebrew/lib/node_modules/openclaw/dist/gateway-cli-CbAOelvx.js",
-];
+const { spawnSync } = require("child_process");
 
 const oldLine =
   'if (!isSubagentSessionKey(storeKey)) return invalid("spawnedBy is only supported for subagent:* sessions");';
 const newLine =
   'if (!(isSubagentSessionKey(storeKey) || storeKey.includes(":acp:"))) return invalid("spawnedBy is only supported for subagent:* or *:acp:* sessions");';
+
+function existingDir(dir) {
+  return dir && fs.existsSync(dir) && fs.statSync(dir).isDirectory();
+}
+
+function npmGlobalRoot() {
+  const result = spawnSync("npm", ["root", "-g"], {
+    encoding: "utf8",
+    stdio: ["ignore", "pipe", "ignore"],
+  });
+  if (result.status !== 0) {
+    return "";
+  }
+  return result.stdout.trim();
+}
+
+function candidateDistDirs() {
+  const dirs = [];
+  if (process.env.OPENCLAW_DIST_DIR) {
+    dirs.push(process.env.OPENCLAW_DIST_DIR);
+  }
+
+  dirs.push(
+    "/opt/homebrew/lib/node_modules/openclaw/dist",
+    "/usr/local/lib/node_modules/openclaw/dist"
+  );
+
+  const npmRoot = npmGlobalRoot();
+  if (npmRoot) {
+    dirs.push(path.join(npmRoot, "openclaw", "dist"));
+  }
+
+  return [...new Set(dirs)].filter(existingDir);
+}
+
+function findTargets() {
+  for (const distDir of candidateDistDirs()) {
+    const files = fs
+      .readdirSync(distDir)
+      .filter((name) => /^gateway-cli-.*\.js$/.test(name))
+      .map((name) => path.join(distDir, name));
+
+    if (files.length > 0) {
+      return files;
+    }
+  }
+
+  return [];
+}
 
 function read(file) {
   return fs.readFileSync(file, "utf8");
@@ -95,6 +140,12 @@ function revertPatch(result) {
 
 function main() {
   const command = process.argv[2] || "status";
+  const targets = findTargets();
+  if (targets.length === 0) {
+    throw new Error(
+      "openclaw gateway dist files not found. Set OPENCLAW_DIST_DIR or install openclaw in a supported global location."
+    );
+  }
   const results = targets.map(inspectFile);
 
   if (command === "status") {

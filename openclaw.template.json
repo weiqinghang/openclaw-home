@@ -115,6 +115,25 @@
       }
     ]
   },
+  "tools": {
+    "agentToAgent": {
+      "enabled": true,
+      "allow": [
+        "*"
+      ]
+    },
+    "sessions": {
+      "visibility": "all"
+    },
+    "web": {
+      "search": {
+        "enabled": true
+      },
+      "fetch": {
+        "enabled": true
+      }
+    }
+  },
   "bindings": [
     {
       "agentId": "wukong",

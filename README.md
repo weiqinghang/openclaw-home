@@ -2,6 +2,82 @@
 
 这个仓库维护当前 OpenClaw 实例的配置层与核心资产层，不承载运行时垃圾数据。
 
+## Quickstart
+
+如果你要把这个仓库整合进你自己的 `.openclaw`，先走这条最小路径。
+
+### 1. 准备本地仓库
+
+把仓库放到你自己的 `~/.openclaw`：
+
+```bash
+git clone <your-fork-or-this-repo> ~/.openclaw
+cd ~/.openclaw
+```
+
+### 2. 生成本地配置
+
+这个仓库区分两类配置文件：
+
+- `openclaw.template.json`：公共模板，给新环境起步
+- `openclaw.json`：作者当前实例配置，不应直接照搬到你的机器
+
+首次接入时，先用模板生成你自己的本地配置：
+
+```bash
+cp openclaw.template.json openclaw.json
+cp secrets.local.example.json secrets.local.json
+```
+
+然后按你的机器环境修改：
+
+- `openclaw.json` 里的 `yourname`
+- `your-feishu-app-id`
+- `your-feishu-user-id`
+- 数据根目录
+- 你实际启用的 Feishu 账号
+
+### 3. 准备运行时目录
+
+默认数据根目录是 `~/Documents/OpenClawData`。如果要改路径，用：
+
+```bash
+node scripts/set-data-root.js /你的/绝对路径
+```
+
+### 4. 填入本地 secrets
+
+至少补齐：
+
+- `runtime.OPENCLAW_GATEWAY_TOKEN`
+- `providers.minimax-cn.apiKey`
+- 你在 `openclaw.json` 中实际启用的 `channels.feishu.accounts.<accountId>.appSecret`
+
+说明：
+
+- `secrets.local.example.json` 提供的是最小发行版示例
+- `laojun` 是可选账号；只有你在配置里启用它时，才需要填写对应 secret
+- `scripts/with-openclaw-secrets.sh` 会按 `secrets.local.json` 中实际存在的账号动态注入环境变量
+
+### 5. 做最小验证
+
+```bash
+./scripts/with-openclaw-secrets.sh openclaw config validate --json
+./scripts/with-openclaw-secrets.sh openclaw models list
+./scripts/with-openclaw-secrets.sh openclaw gateway health
+```
+
+如果要同步 workspace 入口文件与技能白名单，再执行：
+
+```bash
+node scripts/sync-agent-workspace.js
+```
+
+### 6. 关于当前作者实例
+
+仓库里被追踪的 `openclaw.json` 仍是作者本人正在使用的实例配置。  
+你应把它视为**运行中样例**，不是公共默认配置。
+
 ## 当前能力
 
 - 多飞书 App 对应多 Agent
@@ -38,6 +114,7 @@
 ## 操作指引
 
 - 文档入口：[`docs/index.md`](docs/index.md)
+- 公共发行/作者实例边界：[`docs/operator/public-distribution-boundary.md`](docs/operator/public-distribution-boundary.md)
 - 新增 Agent：[`docs/operator/add-agent.md`](docs/operator/add-agent.md)
 - 新飞书用户接入：[`docs/operator/add-feishu-user.md`](docs/operator/add-feishu-user.md)
 - 外贸轻系统最小模型：[`docs/architecture/trade-data-model.md`](docs/architecture/trade-data-model.md)
@@ -64,8 +141,8 @@
 - `agents/`：人格、人设、长期记忆、核心说明
 - `core/skills/`：共享技能库
 - `hooks/`：运行时 Hook
-- `openclaw.json`：当前真实配置
-- `openclaw.template.json`：脱敏模板
+- `openclaw.json`：作者当前实例配置
+- `openclaw.template.json`：公共发行模板
 - `scripts/with-openclaw-secrets.sh`：加载本地 secrets 后启动 OpenClaw
 
 ## 命令入口

@@ -16,11 +16,7 @@ fi
 
 gateway_token="$(jq -r '.runtime.OPENCLAW_GATEWAY_TOKEN // empty' "$SECRETS_FILE")"
 minimax_api_key="$(jq -r '.providers["minimax-cn"].apiKey // empty' "$SECRETS_FILE")"
-feishu_wukong_app_secret="$(jq -r '.channels.feishu.accounts.wukong.appSecret // empty' "$SECRETS_FILE")"
-feishu_taibai_app_secret="$(jq -r '.channels.feishu.accounts.taibai.appSecret // empty' "$SECRETS_FILE")"
-feishu_guanyin_app_secret="$(jq -r '.channels.feishu.accounts.guanyin.appSecret // empty' "$SECRETS_FILE")"
-feishu_guichengxiang_app_secret="$(jq -r '.channels.feishu.accounts.guichengxiang.appSecret // empty' "$SECRETS_FILE")"
-feishu_laojun_app_secret="$(jq -r '.channels.feishu.accounts.laojun.appSecret // empty' "$SECRETS_FILE")"
+feishu_accounts="$(jq -r '.channels.feishu.accounts // {} | keys[]?' "$SECRETS_FILE")"
 
 if [ -z "$gateway_token" ]; then
   echo "Missing .runtime.OPENCLAW_GATEWAY_TOKEN in $SECRETS_FILE" >&2
@@ -32,17 +28,23 @@ if [ -z "$minimax_api_key" ]; then
   exit 1
 fi
 
-if [ -z "$feishu_wukong_app_secret" ] || [ -z "$feishu_taibai_app_secret" ] || [ -z "$feishu_guanyin_app_secret" ] || [ -z "$feishu_guichengxiang_app_secret" ] || [ -z "$feishu_laojun_app_secret" ]; then
-  echo "Missing Feishu appSecret in $SECRETS_FILE" >&2
+if [ -z "$feishu_accounts" ]; then
+  echo "Missing .channels.feishu.accounts in $SECRETS_FILE" >&2
   exit 1
 fi
 
 export OPENCLAW_GATEWAY_TOKEN="$gateway_token"
 export MINIMAX_API_KEY="$minimax_api_key"
-export FEISHU_WUKONG_APP_SECRET="$feishu_wukong_app_secret"
-export FEISHU_TAIBAI_APP_SECRET="$feishu_taibai_app_secret"
-export FEISHU_GUANYIN_APP_SECRET="$feishu_guanyin_app_secret"
-export FEISHU_GUICHENGXIANG_APP_SECRET="$feishu_guichengxiang_app_secret"
-export FEISHU_LAOJUN_APP_SECRET="$feishu_laojun_app_secret"
+
+for account_id in $feishu_accounts; do
+  app_secret="$(jq -r --arg account_id "$account_id" '.channels.feishu.accounts[$account_id].appSecret // empty' "$SECRETS_FILE")"
+  if [ -z "$app_secret" ]; then
+    echo "Missing .channels.feishu.accounts.${account_id}.appSecret in $SECRETS_FILE" >&2
+    exit 1
+  fi
+
+  env_name="$(printf '%s' "$account_id" | tr '[:lower:]-' '[:upper:]_')"
+  export "FEISHU_${env_name}_APP_SECRET=$app_secret"
+done
 
 exec "$@"

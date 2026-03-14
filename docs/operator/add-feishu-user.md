@@ -2,6 +2,26 @@
 
 本文说明：一个企业里的新飞书用户，如何开始使用部分或全部 Agent。
 
+## 边界说明
+
+本文默认用于**修改作者当前运行中的实例或其运行态访问控制**。
+
+也就是说，本文涉及的：
+
+- pairing
+- 当前飞书 App
+- 当前 `openclaw.json` 绑定
+- 当前 gateway / 日志 / 用户访问
+
+都属于**实例运维侧**，不是公共发行模板侧。
+
+如果你的目标是让 clone 用户默认获得更好的起步体验，请改：
+
+- `openclaw.template.json`
+- `secrets.local.example.json`
+- `README.md`
+- [`public-distribution-boundary.md`](public-distribution-boundary.md)
+
 ## 适用场景
 
 适用于：

@@ -2,6 +2,26 @@
 
 目标：在当前仓库中新增一个 **符合既有规范** 的 Agent，并接入飞书。
 
+## 边界说明
+
+本文默认用于**修改作者当前运行中的实例**。
+
+也就是说，本文中的：
+
+- `openclaw.json`
+- `secrets.local.json`
+- LaunchAgent
+- 当前飞书 App / pairing / gateway
+
+都指向**现网实例侧**，不是公共发行模板侧。
+
+如果你的目标是提升 clone 用户的起步体验，请优先修改：
+
+- `openclaw.template.json`
+- `secrets.local.example.json`
+- `README.md`
+- [`public-distribution-boundary.md`](public-distribution-boundary.md)
+
 ## 原则
 
 - `~/.openclaw` 只放配置与核心资产
