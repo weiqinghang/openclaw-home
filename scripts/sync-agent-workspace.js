@@ -29,7 +29,7 @@ const DEFAULT_PROJECT_SKILLSET = [
 ];
 
 const AGENT_SKILLSETS = {
-  wukong: ["find-skills", "summarize"],
+  wukong: ["find-skills"],
   laojun: [
     "find-skills",
     "summarize",
@@ -37,14 +37,8 @@ const AGENT_SKILLSETS = {
     "openspec-workflow",
     "extreme-programming"
   ],
-  taibai: [
-    "feishu-doc",
-    "trade-operations-workflow",
-    "trade-ops-assistant",
-    "trade-quote-layout",
-    "trade-quotation-template"
-  ],
-  guanyin: ["summarize"],
+  taibai: ["trade-operations-workflow"],
+  guanyin: [],
   guichengxiang: ["summarize"]
 };
 
