@@ -2,7 +2,9 @@
 
 ## 目的
 
-修复当前 stable 版本中：
+记录 ACP spawnedBy 兼容问题、历史本地补丁，以及升级后如何判断是否仍需补丁。
+
+历史问题是：
 
 - `sessions_spawn(runtime="acp")`
 - 给 ACP session 写入 `spawnedBy`
@@ -12,23 +14,25 @@
 
 - `spawnedBy is only supported for subagent:* sessions`
 
-## 现状判断
+## 当前判断
 
 这是 **OpenClaw 上游实现冲突**，不是本仓库多 Agent / 多应用 / 多用户架构自身导致。
 
-项目级 `acpx-codex.sh` 可用。  
-但 Agent 内部 runtime ACP 若未打补丁，仍可能失败。
+截至当前实测：
+
+- `OpenClaw 2026.3.13` 已通过本仓库 ACP 验收
+- `sessions_spawn(runtime="acp")` 的 spawnedBy 校验已是**上游修复态**
+- `scripts/openclaw-acp-spawnedby-patch.js status` 在该版本会返回 `upstream_fixed`
+- 因此当前版本**不需要再重放旧补丁**
 
 ## 补丁脚本
 
 - 脚本：[`scripts/openclaw-acp-spawnedby-patch.js`](/Users/claw/.openclaw/scripts/openclaw-acp-spawnedby-patch.js)
-- 目标文件：
-  - `/opt/homebrew/lib/node_modules/openclaw/dist/gateway-cli-C2ZZYgwu.js`
-  - `/opt/homebrew/lib/node_modules/openclaw/dist/gateway-cli-CbAOelvx.js`
+- 目标文件：当前安装目录下的 `gateway-cli-*.js`
 
 脚本能力：
 
-- `status`：检查是否已打补丁
+- `status`：检查是 `needs_patch`、`patched` 还是 `upstream_fixed`
 - `apply`：重放补丁
 - `revert`：回滚补丁
 
@@ -64,12 +68,16 @@ node scripts/openclaw-acp-spawnedby-patch.js status
 
 2. 再判断官方是否已修复
 
-- 若目标文件已不再包含旧签名，也不再需要本补丁：
-  - 先做 ACP 冒烟测试
+- 若显示 `upstream_fixed`：
+  - 说明上游已修
+  - 直接做 ACP 冒烟测试
   - 若通过，则**停用本地补丁**
-- 若仍显示 `needs_patch`：
+- 若显示 `needs_patch`：
   - 说明官方尚未修
   - 重新执行本地补丁
+- 若显示 `patched`：
+  - 说明当前安装里仍是本地补丁态
+  - 继续做 ACP 冒烟测试
 
 3. 重放补丁
 
@@ -88,7 +96,7 @@ node scripts/openclaw-acp-spawnedby-patch.js apply
 
 满足以下两条时，取消本地补丁：
 
-1. 升级后不再出现 `needs_patch`
+1. 升级后出现 `upstream_fixed`
 2. Agent 内部 runtime ACP 冒烟测试稳定通过
 
 若已确认上游修复，可执行：

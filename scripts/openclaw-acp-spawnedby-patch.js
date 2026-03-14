@@ -8,6 +8,8 @@ const oldLine =
   'if (!isSubagentSessionKey(storeKey)) return invalid("spawnedBy is only supported for subagent:* sessions");';
 const newLine =
   'if (!(isSubagentSessionKey(storeKey) || storeKey.includes(":acp:"))) return invalid("spawnedBy is only supported for subagent:* or *:acp:* sessions");';
+const upstreamFixedLine =
+  'if (!supportsSpawnLineage(storeKey)) return invalid("spawnedBy is only supported for subagent:* or acp:* sessions");';
 
 function existingDir(dir) {
   return dir && fs.existsSync(dir) && fs.statSync(dir).isDirectory();
@@ -74,11 +76,14 @@ function inspectFile(file) {
   const content = read(file);
   const hasOld = content.includes(oldLine);
   const hasNew = content.includes(newLine);
-  return { file, hasOld, hasNew };
+  const hasUpstreamFixed = content.includes(upstreamFixedLine);
+  return { file, hasOld, hasNew, hasUpstreamFixed };
 }
 
 function printStatus(result) {
-  const state = result.hasNew
+  const state = result.hasUpstreamFixed
+    ? "upstream_fixed"
+    : result.hasNew
     ? "patched"
     : result.hasOld
       ? "needs_patch"
@@ -87,13 +92,17 @@ function printStatus(result) {
 }
 
 function ensureKnownLayout(result) {
-  if (!result.hasOld && !result.hasNew) {
+  if (!result.hasOld && !result.hasNew && !result.hasUpstreamFixed) {
     throw new Error(`unknown file layout: ${result.file}`);
   }
 }
 
 function applyPatch(result) {
   ensureKnownLayout(result);
+  if (result.hasUpstreamFixed) {
+    console.log(`upstream fixed ${result.file}`);
+    return;
+  }
   if (result.hasNew) {
     console.log(`already patched ${result.file}`);
     return;
@@ -116,6 +125,10 @@ function applyPatch(result) {
 
 function revertPatch(result) {
   ensureKnownLayout(result);
+  if (result.hasUpstreamFixed) {
+    console.log(`upstream fixed ${result.file}; no local patch to revert`);
+    return;
+  }
   if (!result.hasNew) {
     console.log(`not patched ${result.file}`);
     return;

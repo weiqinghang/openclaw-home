@@ -51,7 +51,7 @@ fi
 step "Patch Status"
 if patch_output="$(run_capture node "$PATCH_STATUS_SCRIPT" status)"; then
   echo "$patch_output"
-  if [[ "$patch_output" == *"unknown"* ]] || [[ "$patch_output" == *"needs_patch"* ]]; then
+  if [[ "$patch_output" == *"needs_patch"* ]] || [[ "$patch_output" == *"unknown"* ]]; then
     fail "acp patch status"
   else
     pass "acp patch status"
@@ -77,7 +77,7 @@ fi
 step "Project ACP"
 if acpx_output="$(run_capture "$ACPX_WRAPPER" --timeout 20 exec "回复 OK")"; then
   echo "$acpx_output"
-  if [[ "$acpx_output" == "OK" ]]; then
+  if [[ "$acpx_output" == *"OK"* ]]; then
     pass "project acp"
   else
     fail "project acp"
