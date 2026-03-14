@@ -7,10 +7,11 @@ const os = require("node:os");
 const { spawnSync } = require("node:child_process");
 
 const HOME = os.homedir();
-const ROOT = path.join(HOME, ".openclaw");
-const DATA_ROOT = path.join(HOME, "Documents", "OpenClawData");
+const ROOT = process.env.OPENCLAW_ROOT || path.join(HOME, ".openclaw");
+const DATA_ROOT = process.env.OPENCLAW_DATA_ROOT || path.join(HOME, "Documents", "OpenClawData");
 const REGISTRY_PATH = path.join(ROOT, "ops", "project-registry.json");
 const CONFIG_PATH = path.join(ROOT, "openclaw.json");
+const SYNC_WORKSPACE_SCRIPT = path.join(__dirname, "sync-agent-workspace.js");
 
 function fail(message) {
   console.error(message);
@@ -21,12 +22,16 @@ function ensureDir(dirPath) {
   fs.mkdirSync(dirPath, { recursive: true });
 }
 
+function isNonEmptyDir(dirPath) {
+  return fs.existsSync(dirPath) && fs.readdirSync(dirPath).length > 0;
+}
+
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
 
 function writeJson(filePath, value) {
-  fs.writeFileSync(filePath, JSON.stringify(value, null, 2) + "\n");
+  fs.writeFileSync(filePath, `${JSON.stringify(value, null, 2)}\n`);
 }
 
 function slugify(value) {
@@ -44,6 +49,11 @@ function parseArgs(argv) {
     projectName: "",
     owner: "laojun",
     ownerUserId: "",
+    projectRoot: "",
+    sourceMode: "new",
+    gitRemote: "",
+    spec: "",
+    topic: "",
     dryRun: false
   };
   const positional = [];
@@ -66,6 +76,26 @@ function parseArgs(argv) {
       options.ownerUserId = args.shift() || "";
       continue;
     }
+    if (current === "--project-root") {
+      options.projectRoot = args.shift() || "";
+      continue;
+    }
+    if (current === "--source-mode") {
+      options.sourceMode = args.shift() || "";
+      continue;
+    }
+    if (current === "--git-remote") {
+      options.gitRemote = args.shift() || "";
+      continue;
+    }
+    if (current === "--spec") {
+      options.spec = args.shift() || "";
+      continue;
+    }
+    if (current === "--topic") {
+      options.topic = args.shift() || "";
+      continue;
+    }
     if (current === "--dry-run") {
       options.dryRun = true;
       continue;
@@ -75,11 +105,19 @@ function parseArgs(argv) {
 
   const rawProjectId = positional[0] || "";
   if (!rawProjectId) {
-    fail("Usage: node scripts/create-project-agent.js <projectId> [--project-name <name>] [--group-id <id>] [--owner <agentId>] [--owner-user-id <feishuUserId>] [--dry-run]");
+    fail("Usage: node scripts/create-project-agent.js <projectId> [--project-name <name>] [--group-id <id>] [--owner <agentId>] [--owner-user-id <feishuUserId>] [--project-root <path>] [--source-mode <new|existing>] [--git-remote <url>] [--spec <name>] [--topic <name>] [--dry-run]");
   }
 
   const projectId = slugify(rawProjectId);
   if (!projectId) fail("Invalid projectId");
+
+  const sourceMode = options.sourceMode || "new";
+  if (!["new", "existing"].includes(sourceMode)) {
+    fail("sourceMode must be one of: new, existing");
+  }
+  if (sourceMode === "existing" && !options.gitRemote) {
+    fail("Existing projects require --git-remote");
+  }
 
   return {
     projectId,
@@ -87,15 +125,18 @@ function parseArgs(argv) {
     groupId: options.groupId,
     owner: options.owner,
     ownerUserId: options.ownerUserId,
+    projectRoot: options.projectRoot,
+    sourceMode,
+    gitRemote: options.gitRemote,
+    spec: slugify(options.spec),
+    topic: slugify(options.topic),
     dryRun: options.dryRun
   };
 }
 
-function createProjectFiles(projectId, projectName, agentRoot) {
-  ensureDir(path.join(agentRoot, "agent"));
-
+function createProjectFiles(projectId, projectName, projectRoot) {
   const files = {
-    "AGENTS.md": `# AGENTS.md - ${projectName} 项目维护 Agent
+    "agent/AGENTS.md": `# AGENTS.md - ${projectName} 项目维护 Agent
 
 ## 定位
 你是 \`${projectId}\` 的项目专属维护 Agent。
@@ -127,7 +168,7 @@ function createProjectFiles(projectId, projectName, agentRoot) {
 2. 再给已处理工件、下一步、负责人。
 3. 最后给风险与待确认事项。
 `,
-    "BOOTSTRAP.md": `# BOOTSTRAP.md - ${projectName} 项目维护硬规则
+    "agent/BOOTSTRAP.md": `# BOOTSTRAP.md - ${projectName} 项目维护硬规则
 
 ## 身份硬约束
 
@@ -151,7 +192,7 @@ function createProjectFiles(projectId, projectName, agentRoot) {
 3. 代码审查、回归检查、测试缺口盘点，转 \`reviewer\`。
 4. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 \`Codex\`。
 `,
-    "IDENTITY.md": `# IDENTITY.md - ${projectName} 项目维护 Agent
+    "agent/IDENTITY.md": `# IDENTITY.md - ${projectName} 项目维护 Agent
 
 - **Name:** ${projectName} 项目维护 Agent
 - **Agent ID:** ${projectId}
@@ -162,7 +203,7 @@ function createProjectFiles(projectId, projectName, agentRoot) {
 - **Service Scope:** 仅维护 \`${projectId}\`。
 - **Channel Owner:** 默认不直接绑定飞书，对外由首席产品官代理。
 `,
-    "SOUL.md": `# SOUL.md - ${projectName} 项目维护 Agent
+    "agent/SOUL.md": `# SOUL.md - ${projectName} 项目维护 Agent
 
 ## Background
 你是单项目维护 Agent。你的价值在于保持项目上下文稳定、工件完整、推进链条清晰。
@@ -177,7 +218,7 @@ function createProjectFiles(projectId, projectName, agentRoot) {
 2. 不在 workflow 未确定前展开大方案。
 3. 不抢做首席产品官的对人职责。
 `,
-    "USER.md": `# USER.md - ${projectName} 项目维护 Agent 的服务对象
+    "agent/USER.md": `# USER.md - ${projectName} 项目维护 Agent 的服务对象
 
 - **Primary User:** claw
 - **How To Address:** 你
@@ -185,8 +226,8 @@ function createProjectFiles(projectId, projectName, agentRoot) {
 - **Language:** zh-CN
 - **Notes:** 默认通过首席产品官接任务，也可在仓库内直接维护项目工件。
 `,
-    "HEARTBEAT.md": "# HEARTBEAT.md\n\n# 留空表示默认不启用周期心跳任务。\n",
-    "MEMORY.md": `# MEMORY.md - ${projectName} 项目维护 Agent 的长期记忆
+    "agent/HEARTBEAT.md": "# HEARTBEAT.md\n\n# 留空表示默认不启用周期心跳任务。\n",
+    "agent/MEMORY.md": `# MEMORY.md - ${projectName} 项目维护 Agent 的长期记忆
 
 - 你只服务 \`${projectId}\`
 - 用户未选 workflow 时，必须先在 \`Spec-kit\` 与 \`OpenSpec\` 中二选一
@@ -194,7 +235,7 @@ function createProjectFiles(projectId, projectName, agentRoot) {
 - 专业执行默认外包给 \`architect\`、\`fullstack-engineer\`、\`reviewer\`
 - 对外汇报时，先状态，再下一步，再风险
 `,
-    "TOOLS.md": `# TOOLS.md - ${projectName} 项目维护 Agent 的本地工具备注
+    "agent/TOOLS.md": `# TOOLS.md - ${projectName} 项目维护 Agent 的本地工具备注
 
 ## 常用资源
 - 首席产品官：\`laojun\`
@@ -213,14 +254,14 @@ function createProjectFiles(projectId, projectName, agentRoot) {
   };
 
   for (const [relativePath, content] of Object.entries(files)) {
-    const filePath = path.join(agentRoot, relativePath);
+    const filePath = path.join(projectRoot, relativePath);
     ensureDir(path.dirname(filePath));
     fs.writeFileSync(filePath, content);
   }
 }
 
-function ensureProjectDocs(projectId) {
-  const docsRoot = path.join(ROOT, "projects", projectId, "docs");
+function ensureProjectDocs(projectId, projectRoot) {
+  const docsRoot = path.join(projectRoot, "docs");
   ensureDir(docsRoot);
 
   const docs = {
@@ -288,9 +329,14 @@ function updateRegistry(record) {
 function updateOpenClaw(agentEntry) {
   const config = readJson(CONFIG_PATH);
   const list = config.agents?.list || [];
-  const exists = list.some((agent) => agent.id === agentEntry.id);
-  if (!exists) {
+  const index = list.findIndex((agent) => agent.id === agentEntry.id);
+  if (index === -1) {
     list.push(agentEntry);
+  } else {
+    list[index] = {
+      ...list[index],
+      ...agentEntry
+    };
   }
 
   config.agents = config.agents || {};
@@ -324,79 +370,220 @@ function updateOpenClaw(agentEntry) {
   writeJson(CONFIG_PATH, config);
 }
 
-function ensureRuntimeDirs(projectId) {
-  const base = path.join(DATA_ROOT, "agents", projectId);
-  const dirs = ["workspace", "sessions", "users", path.join("logs", "security")];
-  for (const dir of dirs) {
-    ensureDir(path.join(base, dir));
+function ensureRuntimeDirs(runtimeRoot) {
+  for (const dir of ["workspace", "sessions", "users", path.join("logs", "security")]) {
+    ensureDir(path.join(runtimeRoot, dir));
+  }
+}
+
+function inferVcsProvider(gitRemote) {
+  if (!gitRemote) return "none";
+  const internalGitlabHost = process.env.OPENCLAW_TEST_GITLAB_HOST || "git.tarsocial.com";
+  if (gitRemote.includes("github.com")) return "github";
+  if (gitRemote.includes("git.tarsocial.com") || gitRemote.includes(internalGitlabHost)) {
+    return "gitlab-internal";
+  }
+  return "generic-git";
+}
+
+function branchNameFor(provider, spec, topic) {
+  if (!spec || !topic) return "";
+  const suffix = `${spec}-${topic}`;
+  if (provider === "gitlab-internal") {
+    return `feature/${suffix}`;
+  }
+  return `codex/${suffix}`;
+}
+
+function git(args, options = {}) {
+  const result = spawnSync("git", args, {
+    encoding: "utf8",
+    ...options
+  });
+  if (result.status !== 0) {
+    fail(result.stderr || `git ${args.join(" ")} failed`);
+  }
+  return result.stdout.trim();
+}
+
+function detectDefaultBranch(repoDir) {
+  const ref = git(["-C", repoDir, "symbolic-ref", "refs/remotes/origin/HEAD"]);
+  return ref.replace("refs/remotes/origin/", "");
+}
+
+function ensureGitRemoteState(projectRoot, gitRemote, branchName) {
+  if (!fs.existsSync(projectRoot)) {
+    git(["clone", gitRemote, projectRoot]);
+  } else if (!fs.existsSync(path.join(projectRoot, ".git"))) {
+    if (isNonEmptyDir(projectRoot)) {
+      fail(`Project root exists but is not a git repository: ${projectRoot}`);
+    }
+    git(["clone", gitRemote, projectRoot]);
+  }
+
+  const remotes = git(["-C", projectRoot, "remote"]).split(/\s+/).filter(Boolean);
+  if (!remotes.includes("upstream")) {
+    git(["-C", projectRoot, "remote", "add", "upstream", gitRemote]);
+  }
+
+  const defaultBranch = detectDefaultBranch(projectRoot);
+  git(["-C", projectRoot, "checkout", defaultBranch]);
+  git(["-C", projectRoot, "pull", "origin", defaultBranch]);
+
+  if (branchName) {
+    git(["-C", projectRoot, "checkout", "-B", branchName]);
+    git(["-C", projectRoot, "branch", "--set-upstream-to", `origin/${defaultBranch}`, branchName]);
   }
 }
 
 function syncWorkspace(projectId) {
-  const result = spawnSync("node", [path.join(ROOT, "scripts", "sync-agent-workspace.js"), projectId], {
-    stdio: "inherit"
+  const result = spawnSync("node", [SYNC_WORKSPACE_SCRIPT, projectId], {
+    stdio: "inherit",
+    env: process.env
   });
   if (result.status !== 0) {
     fail(`Failed to sync workspace for ${projectId}`);
   }
 }
 
-function main() {
-  const { projectId, projectName, groupId, owner, ownerUserId, dryRun } = parseArgs(process.argv.slice(2));
-  const agentRoot = path.join(ROOT, "agents", "projects", projectId);
-  const workspace = path.join(DATA_ROOT, "agents", projectId, "workspace");
-  const agentDir = path.join(agentRoot, "agent");
+function buildProjectPaths(projectId, explicitRoot) {
+  const projectRoot = explicitRoot || path.join(DATA_ROOT, "projects", projectId);
+  const runtimeRoot = path.join(projectRoot, ".runtime", "openclaw");
+  return {
+    projectRoot,
+    runtimeRoot,
+    workspace: path.join(runtimeRoot, "workspace"),
+    agentDir: path.join(projectRoot, "agent")
+  };
+}
 
-  if (fs.existsSync(agentRoot)) {
-    fail(`Project agent already exists: ${projectId}`);
-  }
+function buildRecord(fields) {
+  return {
+    ...fields,
+    agentId: fields.projectId,
+    status: "active",
+    kind: "project",
+    createdAt: new Date().toISOString()
+  };
+}
 
-  if (dryRun) {
-    console.log(JSON.stringify({
-      projectId,
-      projectName,
-      groupId,
-      owner,
-      ownerUserId,
-      actions: [
-        `create agents/projects/${projectId}/`,
-        `create projects/${projectId}/docs/`,
-        `create runtime ~/Documents/OpenClawData/agents/${projectId}/`,
-        "update ops/project-registry.json",
-        "update openclaw.json agents.list",
-        ...(groupId ? [
-          `append channels.feishu.accounts.${owner}.groupAllowFrom <- ${groupId}`,
-          `set channels.feishu.accounts.${owner}.groups.${groupId}.requireMention = false`,
-          ...(ownerUserId ? [`append channels.feishu.accounts.${owner}.groups.${groupId}.allowFrom <- ${ownerUserId}`] : [])
-        ] : []),
-        `sync workspace for ${projectId}`
-      ]
-    }, null, 2));
-    return;
-  }
-
-  createProjectFiles(projectId, projectName, agentRoot);
-  ensureProjectDocs(projectId);
-  ensureRuntimeDirs(projectId);
-
-  updateRegistry({
+function buildDryRunPayload(fields) {
+  const {
     projectId,
     projectName,
     groupId,
     owner,
     ownerUserId,
-    agentId: projectId,
-    status: "active",
+    projectRoot,
+    runtimeRoot,
+    sourceMode,
+    gitRemote,
+    vcsProvider,
+    branchName
+  } = fields;
+
+  return {
+    projectId,
+    projectName,
+    groupId,
+    owner,
+    ownerUserId,
+    projectRoot,
+    runtimeRoot,
+    sourceMode,
+    gitRemote,
+    vcsProvider,
+    branchName,
+    actions: [
+      `create ${projectRoot}/agent/`,
+      `create ${projectRoot}/docs/`,
+      `create runtime ${runtimeRoot}/`,
+      "update ops/project-registry.json",
+      "update openclaw.json agents.list",
+      ...(sourceMode === "existing"
+        ? [
+            "clone git remote into project root",
+            `create branch ${branchName}`,
+            "configure upstream remote"
+          ]
+        : []),
+      ...(groupId ? [
+        `append channels.feishu.accounts.${owner}.groupAllowFrom <- ${groupId}`,
+        `set channels.feishu.accounts.${owner}.groups.${groupId}.requireMention = false`,
+        ...(ownerUserId ? [`append channels.feishu.accounts.${owner}.groups.${groupId}.allowFrom <- ${ownerUserId}`] : [])
+      ] : []),
+      `sync workspace for ${projectId}`
+    ]
+  };
+}
+
+function main() {
+  const {
+    projectId,
+    projectName,
+    groupId,
+    owner,
+    ownerUserId,
+    projectRoot: explicitProjectRoot,
+    sourceMode,
+    gitRemote,
+    spec,
+    topic,
+    dryRun
+  } = parseArgs(process.argv.slice(2));
+
+  const { projectRoot, runtimeRoot, workspace, agentDir } = buildProjectPaths(projectId, explicitProjectRoot);
+  const vcsProvider = inferVcsProvider(gitRemote);
+  const branchName = branchNameFor(vcsProvider, spec, topic);
+
+  if (sourceMode === "existing" && !branchName) {
+    fail("Existing projects require --spec and --topic to create a working branch");
+  }
+
+  if (sourceMode === "new" && isNonEmptyDir(projectRoot)) {
+    fail(`Project root already exists: ${projectRoot}`);
+  }
+  if (sourceMode === "existing" && fs.existsSync(path.join(projectRoot, "agent", "AGENTS.md"))) {
+    fail(`Project agent already exists: ${projectId}`);
+  }
+
+  const record = buildRecord({
+    projectId,
+    projectName,
+    groupId,
+    owner,
+    ownerUserId,
     workspace,
     agentDir,
-    projectRoot: path.join(ROOT, "projects", projectId),
-    createdAt: new Date().toISOString()
+    projectRoot,
+    runtimeRoot,
+    sourceMode,
+    gitRemote,
+    vcsProvider,
+    branchName
   });
 
+  if (dryRun) {
+    console.log(JSON.stringify(buildDryRunPayload(record), null, 2));
+    return;
+  }
+
+  if (sourceMode === "existing") {
+    ensureGitRemoteState(projectRoot, gitRemote, branchName);
+  } else {
+    ensureDir(projectRoot);
+  }
+
+  createProjectFiles(projectId, projectName, projectRoot);
+  ensureProjectDocs(projectId, projectRoot);
+  ensureRuntimeDirs(runtimeRoot);
+  updateRegistry(record);
   updateOpenClaw({
     id: projectId,
+    kind: "project",
     workspace,
     agentDir,
+    projectRoot,
     groupId,
     ownerUserId,
     owner

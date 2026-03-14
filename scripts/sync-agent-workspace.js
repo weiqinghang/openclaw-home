@@ -55,7 +55,16 @@ function replacePath(targetPath) {
 }
 
 function resolveSourceDir(agent) {
+  if (agent.sourceDir) {
+    return agent.sourceDir;
+  }
   if (agent.agentDir) {
+    const hasEntryFiles = ENTRY_FILES.some((fileName) =>
+      fs.existsSync(path.join(agent.agentDir, fileName))
+    );
+    if (hasEntryFiles) {
+      return agent.agentDir;
+    }
     return path.dirname(agent.agentDir);
   }
   return path.join(ROOT, "agents", agent.id);
@@ -63,7 +72,7 @@ function resolveSourceDir(agent) {
 
 function resolveSkillSet(agent) {
   if (AGENT_SKILLSETS[agent.id]) return AGENT_SKILLSETS[agent.id];
-  if ((agent.agentDir || "").includes(`${path.sep}agents${path.sep}projects${path.sep}`)) {
+  if (agent.kind === "project" || agent.projectRoot) {
     return DEFAULT_PROJECT_SKILLSET;
   }
   return [];

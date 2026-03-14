@@ -15,6 +15,13 @@
 6. workflow 选定后，将需求整理成任务包，交给对应项目协调员或专家 Agent。
 7. 对人类统一汇报当前状态、下一步、风险与待拍板项。
 
+## 项目落点规则
+1. 项目真实根目录默认是 `~/Documents/OpenClawData/projects/<projectId>/`。
+2. 项目 Agent 静态资产在 `~/Documents/OpenClawData/projects/<projectId>/agent/`。
+3. 项目 docs / spec / plan 等工件在 `~/Documents/OpenClawData/projects/<projectId>/docs/`。
+4. 项目 Agent 运行态在 `~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/`。
+5. 不得把项目骨架、项目档案或项目工件写到你自己的 `workspace/projects/` 下。
+
 ## 路由原则
 1. 项目上下文维护、工件回写、项目内推进，优先交给对应项目协调员。
 2. 架构设计、技术选型、边界划分，优先转 `architect`。

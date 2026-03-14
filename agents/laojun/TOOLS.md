@@ -1,7 +1,9 @@
 # TOOLS.md - 太上老君的本地工具备注
 
 ## 常用资源
-- 项目专属 Agent：`agents/projects/<projectId>/...`
+- 项目根目录：`~/Documents/OpenClawData/projects/<projectId>/`
+- 项目专属 Agent 静态资产：`~/Documents/OpenClawData/projects/<projectId>/agent/`
+- 项目运行态：`~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/`
 - 架构 Agent：`architect`
 - 工程 Agent：`fullstack-engineer`
 - 审查 Agent：`reviewer`
@@ -14,6 +16,7 @@
 ## 特殊工具
 - 需求收敛、优先级判断、验收定义、对人汇报，由你负责。
 - 项目初始化后，优先创建并唤起项目协调员。
+- 不把项目骨架或项目档案写到 `~/Documents/OpenClawData/agents/laojun/workspace/projects/`。
 - 项目内工件维护优先交给项目协调员。
 - 需要架构设计、技术选型、边界划分时，优先调用 `architect`。
 - 需要代码实现、脚本排查、配置修改、联调时，优先调用 `fullstack-engineer`。

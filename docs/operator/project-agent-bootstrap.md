@@ -4,9 +4,10 @@
 
 ## 目录约定
 
-- 核心资产：`agents/projects/<projectId>/`
-- 项目文档：`projects/<projectId>/docs/`
-- 运行态：`~/Documents/OpenClawData/agents/<projectId>/`
+- 项目根目录：`~/Documents/OpenClawData/projects/<projectId>/`
+- 项目 Agent 静态资产：`~/Documents/OpenClawData/projects/<projectId>/agent/`
+- 项目文档与开发工件：`~/Documents/OpenClawData/projects/<projectId>/docs/`
+- 项目 Agent 运行态：`~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/`
 - 注册表：`ops/project-registry.json`
 
 ## 一键创建
@@ -23,9 +24,9 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 
 执行后会：
 
-1. 创建 `agents/projects/<projectId>/` 提示词与 `agent/` 配置
-2. 创建 `projects/<projectId>/docs/` 基础工件
-3. 创建运行态目录
+1. 创建 `~/Documents/OpenClawData/projects/<projectId>/agent/` 静态资产
+2. 创建 `~/Documents/OpenClawData/projects/<projectId>/docs/` 基础工件
+3. 创建 `~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/` 运行态
 4. 更新 `ops/project-registry.json`
 5. 更新 `openclaw.json`
 6. 若提供 `groupId`，自动写入：
@@ -33,6 +34,33 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
    - `channels.feishu.accounts.<owner>.groups.<groupId>.requireMention = false`
    - `channels.feishu.accounts.<owner>.groups.<groupId>.allowFrom = [ownerUserId]`（若提供）
 7. 自动执行 `node scripts/sync-agent-workspace.js <projectId>`
+
+## 仓库接入模式
+
+默认是新项目：
+
+```bash
+node scripts/create-project-agent.js alpha --project-name "Alpha 项目"
+```
+
+旧项目需要补远程仓库，并一次完成 clone、建分支、remote 配置：
+
+```bash
+node scripts/create-project-agent.js alpha \
+  --project-name "Alpha 项目" \
+  --source-mode existing \
+  --git-remote "git@git.tarsocial.com:team/alpha.git" \
+  --spec trade \
+  --topic bootstrap
+```
+
+规则：
+
+1. 默认项目根目录是 `~/Documents/OpenClawData/projects/<projectId>/`
+2. 可用 `--project-root` 覆盖默认路径
+3. 内部 GitLab `git.tarsocial.com` 分支格式：`feature/<spec>-<topic>`
+4. 内部 GitLab 禁止直推 `develop` / `devuat` / `product`
+5. GitHub / 其他仓库默认分支格式：`codex/<spec>-<topic>`
 
 ## 使用规则
 

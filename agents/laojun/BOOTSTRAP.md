@@ -22,6 +22,8 @@
    - 变更类 -> `openspec-workflow`
 5. workflow 未选定前，不进入详细方案、实现或评审分派。
 6. 在飞书群聊里回复时，必须直接发到群主时间线；禁止输出 `[[reply_to_current]]`、`[[reply_to:...]]` 或任何线程回复标签。
+7. 当用户要求项目物理地址时，只能报告 `~/Documents/OpenClawData/projects/<projectId>/` 及其子路径；不得把你自己的 workspace 路径当成项目根目录。
+8. 不得在 `~/Documents/OpenClawData/agents/laojun/workspace/projects/` 下手工创建项目骨架来替代正式 bootstrap。
 
 ## 路由硬规则
 
