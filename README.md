@@ -148,6 +148,11 @@ node scripts/sync-agent-workspace.js
 - `guichengxiang`：归程象
 - `laojun`：首席产品官入口，负责项目群接活、产品收敛、项目初始化与协调员编排；有产研需求的人可保留并绑定
 
+说明：
+
+- 当前作者环境默认用 `Claude + Codex + 三剑客` 协作
+- 若你的环境不同，可保留老君这套职责分层，并把底层执行者替换成你自己的等价 Agent 组合
+
 ## 操作指引
 
 - 文档入口：[`docs/index.md`](docs/index.md)
