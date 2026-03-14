@@ -313,6 +313,7 @@
         "laojun": {
           "appId": "cli_a92b7bfc0bb8dbc8",
           "appSecret": "${FEISHU_LAOJUN_APP_SECRET}",
+          "replyToMode": "off",
           "requireMention": true,
           "groupPolicy": "allowlist",
           "groupAllowFrom": [
