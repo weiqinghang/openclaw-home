@@ -95,7 +95,7 @@ _openclaw_onboard() {
     "--accept-risk[Acknowledge that agents are powerful and full system access is risky (required for --non-interactive)]" \
     "--flow[Wizard flow: quickstart|advanced|manual]" \
     "--mode[Wizard mode: local|remote]" \
-    "--auth-choice[Auth: token|openai-codex|chutes|vllm|apiKey|openai-api-key|mistral-api-key|openrouter-api-key|kilocode-api-key|ai-gateway-api-key|cloudflare-ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|minimax-api|synthetic-api-key|venice-api-key|together-api-key|huggingface-api-key|opencode-zen|xai-api-key|litellm-api-key|qianfan-api-key|volcengine-api-key|byteplus-api-key|moonshot-api-key-cn|github-copilot|gemini-api-key|google-gemini-cli|zai-api-key|zai-coding-global|zai-coding-cn|zai-global|zai-cn|xiaomi-api-key|minimax-portal|qwen-portal|copilot-proxy|apiKey|opencode-zen|minimax-api|minimax-api-key-cn|minimax-api-lightning|custom-api-key|skip|setup-token|oauth|claude-cli|codex-cli|minimax-cloud|minimax]" \
+    "--auth-choice[Auth: token|openai-codex|chutes|apiKey|openai-api-key|mistral-api-key|openrouter-api-key|kilocode-api-key|ai-gateway-api-key|cloudflare-ai-gateway-api-key|moonshot-api-key|kimi-code-api-key|gemini-api-key|zai-api-key|xiaomi-api-key|minimax-global-api|synthetic-api-key|venice-api-key|together-api-key|huggingface-api-key|opencode-zen|opencode-go|xai-api-key|litellm-api-key|qianfan-api-key|modelstudio-api-key-cn|modelstudio-api-key|volcengine-api-key|byteplus-api-key|moonshot-api-key-cn|github-copilot|gemini-api-key|google-gemini-cli|zai-api-key|zai-coding-global|zai-coding-cn|zai-global|zai-cn|xiaomi-api-key|minimax-global-oauth|minimax-global-api|minimax-cn-oauth|minimax-cn-api|qwen-portal|copilot-proxy|apiKey|opencode-zen|qianfan-api-key|modelstudio-api-key-cn|modelstudio-api-key|custom-api-key|ollama|sglang|vllm|skip|setup-token|oauth|claude-cli|codex-cli]" \
     "--token-provider[Token provider id (non-interactive; used with --auth-choice token)]" \
     "--token[Token value (non-interactive; used with --auth-choice token)]" \
     "--token-profile-id[Auth profile id (non-interactive; default: <provider>:manual)]" \
@@ -120,10 +120,13 @@ _openclaw_onboard() {
     "--venice-api-key[Venice API key]" \
     "--together-api-key[Together AI API key]" \
     "--huggingface-api-key[Hugging Face API key (HF token)]" \
-    "--opencode-zen-api-key[OpenCode Zen API key]" \
+    "--opencode-zen-api-key[OpenCode API key (Zen catalog)]" \
+    "--opencode-go-api-key[OpenCode API key (Go catalog)]" \
     "--xai-api-key[xAI API key]" \
     "--litellm-api-key[LiteLLM API key]" \
     "--qianfan-api-key[QIANFAN API key]" \
+    "--modelstudio-api-key-cn[Alibaba Cloud Model Studio Coding Plan API key (China)]" \
+    "--modelstudio-api-key[Alibaba Cloud Model Studio Coding Plan API key (Global/Intl)]" \
     "--volcengine-api-key[Volcano Engine API key]" \
     "--byteplus-api-key[BytePlus API key]" \
     "--custom-base-url[Custom provider base URL]" \
@@ -932,7 +935,7 @@ _openclaw_agent() {
     "(--to -t)"{--to,-t}"[Recipient number in E.164 used to derive the session key]" \
     "--session-id[Use an explicit session id]" \
     "--agent[Agent id (overrides routing bindings)]" \
-    "--thinking[Thinking level: off | minimal | low | medium | high]" \
+    "--thinking[Thinking level: off | minimal | low | medium | high | xhigh]" \
     "--verbose[Persist agent verbose level for the session]" \
     "--channel[Delivery channel: last|telegram|whatsapp|discord|irc|googlechat|slack|signal|imessage|line|feishu|nostr|msteams|mattermost|nextcloud-talk|matrix|bluebubbles|zalo|zalouser|synology-chat|tlon (omit to use the main session channel)]" \
     "--reply-to[Delivery target override (separate from session routing)]" \
@@ -1163,7 +1166,7 @@ _openclaw_browser_create_profile() {
     "--name[Profile name (lowercase, numbers, hyphens)]" \
     "--color[Profile color (hex format, e.g. #0066CC)]" \
     "--cdp-url[CDP URL for remote Chrome (http/https)]" \
-    "--driver[Profile driver (openclaw|extension). Default: openclaw]"
+    "--driver[Profile driver (openclaw|extension|existing-session). Default: openclaw]"
 }
 
 _openclaw_browser_delete_profile() {
@@ -1725,6 +1728,7 @@ _openclaw_gateway_status() {
     "--password[Gateway password (password auth)]" \
     "--timeout[Timeout in ms]" \
     "--no-probe[Skip RPC probe]" \
+    "--require-rpc[Exit non-zero when the RPC probe fails]" \
     "--deep[Scan system-level services]" \
     "--json[Output JSON]"
 }
@@ -1861,6 +1865,7 @@ _openclaw_daemon_status() {
     "--password[Gateway password (password auth)]" \
     "--timeout[Timeout in ms]" \
     "--no-probe[Skip RPC probe]" \
+    "--require-rpc[Exit non-zero when the RPC probe fails]" \
     "--deep[Scan system-level services]" \
     "--json[Output JSON]"
 }
@@ -3045,7 +3050,7 @@ _openclaw_cron_add() {
     "--exact[Disable cron staggering (set stagger to 0)]" \
     "--system-event[System event payload (main session)]" \
     "--message[Agent message payload]" \
-    "--thinking[Thinking level for agent jobs (off|minimal|low|medium|high)]" \
+    "--thinking[Thinking level for agent jobs (off|minimal|low|medium|high|xhigh)]" \
     "--model[Model override for agent jobs (provider/model or alias)]" \
     "--timeout-seconds[Timeout seconds for agent jobs]" \
     "--light-context[Use lightweight bootstrap context for agent jobs]" \
@@ -3129,7 +3134,7 @@ _openclaw_cron_edit() {
     "--exact[Disable cron staggering (set stagger to 0)]" \
     "--system-event[Set systemEvent payload]" \
     "--message[Set agentTurn payload message]" \
-    "--thinking[Thinking level for agent jobs]" \
+    "--thinking[Thinking level for agent jobs (off|minimal|low|medium|high|xhigh)]" \
     "--model[Model override for agent jobs]" \
     "--timeout-seconds[Timeout seconds for agent jobs]" \
     "--light-context[Enable lightweight bootstrap context for agent jobs]" \
