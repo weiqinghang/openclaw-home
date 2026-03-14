@@ -13,6 +13,8 @@
 **明确支持版本：本仓库当前明确验证过的 OpenClaw 版本是 `2026.3.13`。**  
 OpenClaw 上游迭代很快，新版本不保证天然兼容本仓库的脚本、补丁和运行约定。若你使用的是其他版本，可以让你自己的 Coding Agent 先按本地环境适配；如果不想自行处理，就等作者后续补兼容。
 
+若你修改了 `secrets.local.json` 中的 gateway token 或任一 `FEISHU_*_APP_SECRET`，记得再运行：`node scripts/sync-launchagent-secrets.js --restart-gateway --check-health`
+
 这个仓库的目标不是让人类自己慢慢琢磨，而是让你的 Coding Agent：
 
 1. 识别公共模板与实例边界
@@ -162,6 +164,7 @@ node scripts/sync-agent-workspace.js
 
 - 文档入口：[`docs/index.md`](docs/index.md)
 - 老君使用说明：[`docs/agents/laojun/usage.md`](docs/agents/laojun/usage.md)
+- 最小回归清单：[`docs/operator/minimal-regression-checklist.md`](docs/operator/minimal-regression-checklist.md)
 - 公共发行/作者实例边界：[`docs/operator/public-distribution-boundary.md`](docs/operator/public-distribution-boundary.md)
 - 新增 Agent：[`docs/operator/add-agent.md`](docs/operator/add-agent.md)
 - 新飞书用户接入：[`docs/operator/add-feishu-user.md`](docs/operator/add-feishu-user.md)

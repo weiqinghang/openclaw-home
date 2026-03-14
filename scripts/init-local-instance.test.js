@@ -72,6 +72,12 @@ test("creates local instance files and backups with --force", () => {
 
   assert.equal(config.hooks.internal.entries["user-permissions"].config.userRules[0].match.userIds[0], "ou_test");
   assert.equal(config.channels.feishu.accounts.wukong.appId, "cli_test");
+  assert.equal(config.channels.feishu.groupAllowFrom, undefined);
+  assert.equal(config.channels.feishu.userAllowlist, undefined);
+  assert.equal(config.channels.feishu.requireMention, undefined);
+  assert.equal(config.channels.feishu.groupPolicy, undefined);
+  assert.equal(config.channels.feishu.defaultAccount, "wukong");
+  assert.equal(config.channels.feishu.accounts.wukong.groupPolicy, undefined);
   assert.ok(config.agents.list[0].agentDir.includes("/Users/tester/.openclaw/agents/wukong/agent"));
   assert.equal(
     secrets.channels.feishu.accounts.guichengxiang.appSecret,

@@ -18,7 +18,6 @@ function getConfig() {
   const ownerRule = userRules.find((rule) => rule.name === 'owner-feishu');
   const ownerOpenId =
     ownerRule?.match?.userIds?.[0] ||
-    cfg?.channels?.feishu?.userAllowlist?.[0] ||
     'ou_127b9bf41eae8201c7b6062bca18b0ec';
   return {
     appId: cfg.channels.feishu.accounts.taibai.appId,

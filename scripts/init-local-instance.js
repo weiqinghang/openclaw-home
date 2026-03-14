@@ -121,14 +121,6 @@ function generateConfig(template, options) {
     ownerRule.match.userIds = [options.feishuUserId];
   }
 
-  if (Array.isArray(config.channels?.feishu?.groupAllowFrom)) {
-    config.channels.feishu.groupAllowFrom = [options.feishuUserId];
-  }
-
-  if (Array.isArray(config.channels?.feishu?.userAllowlist)) {
-    config.channels.feishu.userAllowlist = [options.feishuUserId];
-  }
-
   for (const account of Object.values(config.channels?.feishu?.accounts || {})) {
     account.appId = options.feishuAppId;
   }

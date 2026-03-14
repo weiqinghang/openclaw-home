@@ -207,6 +207,12 @@ Gateway 作为 LaunchAgent 启动时，只认 **plist 里的环境变量**。
 
 并重启 gateway。
 
+推荐直接使用仓库脚本：
+
+```bash
+node scripts/sync-launchagent-secrets.js --restart-gateway --check-health
+```
+
 否则会出现：
 
 - `openclaw.json` 看起来没问题

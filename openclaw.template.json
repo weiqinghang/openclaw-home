@@ -270,16 +270,9 @@
   "channels": {
     "feishu": {
       "enabled": true,
+      "defaultAccount": "wukong",
       "domain": "feishu",
       "connectionMode": "websocket",
-      "groupPolicy": "allowlist",
-      "groupAllowFrom": [
-        "your-feishu-user-id"
-      ],
-      "requireMention": true,
-      "userAllowlist": [
-        "your-feishu-user-id"
-      ],
       "accounts": {
         "wukong": {
           "appId": "your-feishu-app-id",

@@ -5,6 +5,7 @@
 ## operator
 
 - [`operator/public-distribution-boundary.md`](operator/public-distribution-boundary.md)：公共发行模板与作者实例配置的边界说明
+- [`operator/minimal-regression-checklist.md`](operator/minimal-regression-checklist.md)：升级后最小回归清单
 - [`operator/add-agent.md`](operator/add-agent.md)：新增 Agent 操作指引
 - [`operator/add-feishu-user.md`](operator/add-feishu-user.md)：新飞书用户接入
 - [`operator/agent-context-validation.md`](operator/agent-context-validation.md)：Agent 入口与技能白名单验证
