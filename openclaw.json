@@ -119,7 +119,10 @@
       "compaction": {
         "mode": "safeguard"
       },
-      "maxConcurrent": 4
+      "maxConcurrent": 4,
+      "subagents": {
+        "announceTimeoutMs": 600000
+      }
     },
     "list": [
       {

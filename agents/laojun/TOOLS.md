@@ -32,7 +32,9 @@
 - 不要用 `agents_list`、`~/Documents/OpenClawData/agents/<projectId>/`、或“当前无活跃会话”去否定项目维护 Agent；项目 Agent 默认注册在 `~/Documents/OpenClawData/projects/<projectId>/`，且首轮调用前本来没有会话。
 - 项目初始化缺项时，只输出缺失项、影响、待确认信息与下一步初始化动作；不要继续项目执行。
 - 项目初始化完成后，项目内问题默认先发给 `agent:<projectId>:main`；你自己不要直接读项目 docs / prototype / design 来代答。
-- 推荐工具：`sessions_send`，`sessionKey` 固定使用 `agent:<projectId>:main`，等待项目维护 Agent 返回后再对人总结。
+- 收到项目任务后，**必须先用 `message` 工具立即回复用户一句简短确认**（例如"收到，正在交给项目维护 Agent 处理，预计需要几分钟"），然后再调 `sessions_send`。这样用户不用等你整个 run 结束才看到反馈。
+- 推荐工具：`sessions_send`，`sessionKey` 固定使用 `agent:<projectId>:main`，**必须传 `timeoutSeconds: 600`**（10 分钟），等待项目维护 Agent 返回后再对人总结。
+- 若 `sessions_send` 超时仍未返回，你必须：（1）立即告知用户"项目维护 Agent 仍在执行中，预计还需 X 分钟"；（2）承诺收到结果后第一时间主动汇报。
 - 若 `sessions_send(agent:<projectId>:main)` 失败，先报告“项目维护 Agent 不可达/启动失败”，并检查模型、鉴权、注册配置；不要改口成“项目未初始化”。
 - 需求收敛、优先级判断、验收定义、对人汇报，由你负责。
 - 项目初始化后，优先创建并唤起项目维护 Agent。
