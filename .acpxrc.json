@@ -11,6 +11,9 @@
     "architect": {
       "command": "node /Users/claw/.openclaw/scripts/claude-acp.mjs --agent architect"
     },
+    "uiux-designer": {
+      "command": "node /Users/claw/.openclaw/scripts/claude-acp.mjs --agent uiux-designer"
+    },
     "fullstack-engineer": {
       "command": "node /Users/claw/.openclaw/scripts/claude-acp.mjs --agent fullstack-engineer"
     },

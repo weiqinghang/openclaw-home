@@ -173,6 +173,8 @@ test("creates a new project under externalized project root with externalized ru
   const runtimeRoot = path.join(projectRoot, ".runtime", "openclaw");
   const registry = readJson(path.join(rootDir, "ops", "project-registry.json"));
   const project = registry.projects.alpha;
+  const toolsContent = fs.readFileSync(path.join(projectRoot, "agent", "TOOLS.md"), "utf8");
+  const agentsContent = fs.readFileSync(path.join(projectRoot, "agent", "AGENTS.md"), "utf8");
 
   assert.equal(project.projectRoot, projectRoot);
   assert.equal(project.runtimeRoot, runtimeRoot);
@@ -193,8 +195,9 @@ test("creates a new project under externalized project root with externalized ru
   const agent = config.agents.list.find((item) => item.id === "alpha");
   assert.equal(agent.agentDir, path.join(projectRoot, "agent"));
   assert.equal(agent.workspace, path.join(runtimeRoot, "workspace"));
-  assert.equal(agent.kind, "project");
-  assert.equal(agent.projectRoot, projectRoot);
+  assert.match(toolsContent, /UI\/UX Agent：`uiux-designer`/);
+  assert.match(toolsContent, /专业任务默认转给专家 Agent/);
+  assert.match(agentsContent, /UI\/UX、页面设计、原型制作、Figma 实现 -> `uiux-designer`/);
 });
 
 test("clones existing gitlab project, creates compliant branch, and records git metadata", () => {

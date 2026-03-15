@@ -41,11 +41,7 @@ const AGENT_SKILLSETS = {
     "summarize",
     "spec-kit-workflow",
     "openspec-workflow",
-    "extreme-programming",
-    "ui-ux-pro-max",
-    "playwright",
-    "figma",
-    "figma-implement-design"
+    "extreme-programming"
   ],
   taibai: ["trade-operations-workflow"],
   guanyin: [],

@@ -83,7 +83,7 @@ test("syncs minimal skill white lists for wukong guanyin and taibai", () => {
   );
 });
 
-test("syncs laojun with UI delivery skills", () => {
+test("syncs laojun without UI delivery skills", () => {
   const homeDir = makeTempHome();
   const rootDir = path.join(homeDir, ".openclaw");
   const dataRoot = path.join(homeDir, "Documents", "OpenClawData");
@@ -108,15 +108,6 @@ test("syncs laojun with UI delivery skills", () => {
   ]) {
     writeFile(path.join(rootDir, "core", "skills", skillName, "SKILL.md"), `# ${skillName}\n`);
   }
-  for (const skillName of [
-    "ui-ux-pro-max",
-    "playwright",
-    "figma",
-    "figma-implement-design"
-  ]) {
-    writeFile(path.join(homeDir, ".codex", "skills", skillName, "SKILL.md"), `# ${skillName}\n`);
-  }
-
   const result = spawnSync("node", [SCRIPT, "laojun"], {
     cwd: REPO_ROOT,
     encoding: "utf8",
@@ -131,14 +122,10 @@ test("syncs laojun with UI delivery skills", () => {
     listDirNames(path.join(dataRoot, "agents", "laojun", "workspace", "skills")),
     [
       "extreme-programming",
-      "figma",
-      "figma-implement-design",
       "find-skills",
       "openspec-workflow",
-      "playwright",
       "spec-kit-workflow",
-      "summarize",
-      "ui-ux-pro-max"
+      "summarize"
     ]
   );
 });

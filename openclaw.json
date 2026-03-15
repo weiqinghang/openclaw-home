@@ -121,11 +121,6 @@
         "id": "guichengxiang",
         "workspace": "/Users/claw/Documents/OpenClawData/agents/guichengxiang/workspace",
         "agentDir": "/Users/claw/.openclaw/agents/guichengxiang/agent"
-      },
-      {
-        "id": "test-project",
-        "workspace": "/Users/claw/Documents/OpenClawData/agents/test-project/workspace",
-        "agentDir": "/Users/claw/.openclaw/agents/projects/test-project/agent"
       }
     ]
   },
@@ -327,14 +322,14 @@
                 "ou_d14f52a10cdf41c0420c59a273ccad61"
               ]
             },
-    "oc_d41755f2043cc0dd8036e4c3e1d1b3b8": {
-      "requireMention": false,
-      "allowFrom": [
-        "ou_d14f52a10cdf41c0420c59a273ccad61",
-        "ou_1b2c15789422217be9f6474be481c717"
-      ]
-    }
-  }
+            "oc_d41755f2043cc0dd8036e4c3e1d1b3b8": {
+              "requireMention": false,
+              "allowFrom": [
+                "ou_d14f52a10cdf41c0420c59a273ccad61",
+                "ou_1b2c15789422217be9f6474be481c717"
+              ]
+            }
+          }
         },
         "wukong": {
           "appId": "cli_a915a84b1db8dbd6",

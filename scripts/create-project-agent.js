@@ -154,9 +154,10 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 
 ## 路由原则
 1. 架构设计、技术选型、边界划分 -> \`architect\`
-2. 实现、联调、脚本排查、配置修改 -> \`fullstack-engineer\`
-3. 代码审查、回归风险、测试缺口 -> \`reviewer\`
-4. Claude ACP 链路不可用，或需要更稳的底层工程执行时 -> \`Codex\`
+2. UI/UX、页面设计、原型制作、Figma 实现 -> \`uiux-designer\`
+3. 实现、联调、脚本排查、配置修改 -> \`fullstack-engineer\`
+4. 代码审查、回归风险、测试缺口 -> \`reviewer\`
+5. Claude ACP 链路不可用，或需要更稳的底层工程执行时 -> \`Codex\`
 
 ## 边界
 1. 只服务 \`${projectId}\`。
@@ -188,9 +189,10 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 ## 路由硬规则
 
 1. 架构设计、技术选型、边界划分、迁移方案，转 \`architect\`。
-2. 实现、联调、脚本排查、配置修改、工程调试，转 \`fullstack-engineer\`。
-3. 代码审查、回归检查、测试缺口盘点，转 \`reviewer\`。
-4. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 \`Codex\`。
+2. UI/UX、页面设计、原型制作、Figma 实现，转 \`uiux-designer\`。
+3. 实现、联调、脚本排查、配置修改、工程调试，转 \`fullstack-engineer\`。
+4. 代码审查、回归检查、测试缺口盘点，转 \`reviewer\`。
+5. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 \`Codex\`。
 `,
     "agent/IDENTITY.md": `# IDENTITY.md - ${projectName} 项目维护 Agent
 
@@ -240,6 +242,7 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 ## 常用资源
 - 首席产品官：\`laojun\`
 - 架构 Agent：\`architect\`
+- UI/UX Agent：\`uiux-designer\`
 - 工程 Agent：\`fullstack-engineer\`
 - 审查 Agent：\`reviewer\`
 - 底层工程兜底：Codex
@@ -247,6 +250,7 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 ## 特殊工具
 - 项目内工件维护、推进、验收收口，由你负责。
 - 专业任务默认转给专家 Agent。
+- 界面、交互、原型、设计图任务默认转给 \`uiux-designer\`。
 - Claude ACP 不可用或需要更稳的仓库执行时，再转 Codex。
 `,
     "agent/auth-profiles.json": '{\n  "useDefault": true\n}\n',
@@ -605,13 +609,8 @@ function main() {
   updateRegistry(record);
   updateOpenClaw({
     id: projectId,
-    kind: "project",
     workspace,
-    agentDir,
-    projectRoot,
-    groupId,
-    ownerUserId,
-    owner
+    agentDir
   });
 
   syncWorkspace(projectId);

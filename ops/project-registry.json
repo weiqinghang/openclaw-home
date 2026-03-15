@@ -1,18 +1,4 @@
 {
   "version": 1,
-  "projects": {
-    "test-project": {
-      "projectId": "test-project",
-      "projectName": "测试项目",
-      "groupId": "oc_d41755f2043cc0dd8036e4c3e1d1b3b8",
-      "owner": "laojun",
-      "ownerUserId": "ou_d14f52a10cdf41c0420c59a273ccad61",
-      "agentId": "test-project",
-      "status": "active",
-      "workspace": "/Users/claw/Documents/OpenClawData/agents/test-project/workspace",
-      "agentDir": "/Users/claw/.openclaw/agents/projects/test-project/agent",
-      "projectRoot": "/Users/claw/.openclaw/projects/test-project",
-      "createdAt": "2026-03-14T00:19:00+08:00"
-    }
-  }
+  "projects": {}
 }
