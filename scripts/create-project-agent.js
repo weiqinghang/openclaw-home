@@ -151,13 +151,15 @@ function createProjectFiles(projectId, projectName, projectRoot) {
    - 既有系统变更、重构、迁移、兼容性调整 -> \`openspec-workflow\`
 5. workflow 选定后，再把架构、实现、审查任务转给专家 Agent。
 6. 回写项目状态，并向首席产品官或人类汇报。
+7. 大任务默认先拆模块、目录和文件清单，再逐文件推进；禁止一次性生成或写入巨大单文件。
 
 ## 路由原则
-1. 架构设计、技术选型、边界划分 -> \`architect\`
-2. UI/UX、页面设计、原型制作、Figma 实现 -> \`uiux-designer\`
-3. 实现、联调、脚本排查、配置修改 -> \`fullstack-engineer\`
-4. 代码审查、回归风险、测试缺口 -> \`reviewer\`
-5. Claude ACP 链路不可用，或需要更稳的底层工程执行时 -> \`Codex\`
+1. 架构设计、技术选型、边界划分 -> \`architect\`（direct acpx：\`/Users/claw/.openclaw/scripts/acpx-architect.sh\`）
+2. UI/UX、页面设计、原型制作、Figma 实现 -> \`uiux-designer\`（direct acpx：\`/Users/claw/.openclaw/scripts/acpx-uiux.sh\`）
+3. 实现、联调、脚本排查、配置修改 -> \`fullstack-engineer\`（direct acpx：\`/Users/claw/.openclaw/scripts/acpx-fullstack.sh\`）
+4. 代码审查、回归风险、测试缺口 -> \`reviewer\`（direct acpx：\`/Users/claw/.openclaw/scripts/acpx-reviewer.sh\`）
+5. 不得用 \`sessions_spawn\` 或通用 subagent 替代共享专家。
+6. Claude ACP 链路不可用，或需要更稳的底层工程执行时 -> \`Codex\`
 
 ## 边界
 1. 只服务 \`${projectId}\`。
@@ -185,14 +187,16 @@ function createProjectFiles(projectId, projectName, projectRoot) {
    - 新建类 -> \`spec-kit-workflow\`
    - 变更类 -> \`openspec-workflow\`
 4. workflow 未选定前，不进入详细计划、实现或评审分派。
+5. 大型交付必须先拆模块和文件清单，再逐文件落地；禁止一次性生成或写入巨大单文件。
 
 ## 路由硬规则
 
-1. 架构设计、技术选型、边界划分、迁移方案，转 \`architect\`。
-2. UI/UX、页面设计、原型制作、Figma 实现，转 \`uiux-designer\`。
-3. 实现、联调、脚本排查、配置修改、工程调试，转 \`fullstack-engineer\`。
-4. 代码审查、回归检查、测试缺口盘点，转 \`reviewer\`。
-5. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 \`Codex\`。
+1. 架构设计、技术选型、边界划分、迁移方案，转 \`architect\`，默认执行 \`/Users/claw/.openclaw/scripts/acpx-architect.sh\`。
+2. UI/UX、页面设计、原型制作、Figma 实现，转 \`uiux-designer\`，默认执行 \`/Users/claw/.openclaw/scripts/acpx-uiux.sh\`。
+3. 实现、联调、脚本排查、配置修改、工程调试，转 \`fullstack-engineer\`，默认执行 \`/Users/claw/.openclaw/scripts/acpx-fullstack.sh\`。
+4. 代码审查、回归检查、测试缺口盘点，转 \`reviewer\`，默认执行 \`/Users/claw/.openclaw/scripts/acpx-reviewer.sh\`。
+5. 不得用 \`sessions_spawn\`、generic \`claude\`、或通用 subagent 替代共享专家。
+6. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 \`Codex\`。
 `,
     "agent/IDENTITY.md": `# IDENTITY.md - ${projectName} 项目维护 Agent
 
@@ -235,6 +239,7 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 - 用户未选 workflow 时，必须先在 \`Spec-kit\` 与 \`OpenSpec\` 中二选一
 - 项目上下文以本项目工件和注册表为准
 - 专业执行默认外包给 \`architect\`、\`fullstack-engineer\`、\`reviewer\`
+- 大任务默认拆模块、拆文件、分步验证；禁止“一次性大文件一把梭”
 - 对外汇报时，先状态，再下一步，再风险
 `,
     "agent/TOOLS.md": `# TOOLS.md - ${projectName} 项目维护 Agent 的本地工具备注
@@ -246,11 +251,14 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 - 工程 Agent：\`fullstack-engineer\`
 - 审查 Agent：\`reviewer\`
 - 底层工程兜底：Codex
+- direct acpx 入口：\`architect\` -> \`/Users/claw/.openclaw/scripts/acpx-architect.sh\`，\`uiux-designer\` -> \`/Users/claw/.openclaw/scripts/acpx-uiux.sh\`，\`fullstack-engineer\` -> \`/Users/claw/.openclaw/scripts/acpx-fullstack.sh\`，\`reviewer\` -> \`/Users/claw/.openclaw/scripts/acpx-reviewer.sh\`
 
 ## 特殊工具
 - 项目内工件维护、推进、验收收口，由你负责。
 - 专业任务默认转给专家 Agent。
 - 界面、交互、原型、设计图任务默认转给 \`uiux-designer\`。
+- 禁止用 \`sessions_spawn\`、generic \`claude\`、或通用 subagent 替代共享专家。
+- 大任务默认先拆模块和文件清单，再逐文件落地；禁止一次性生成或写入巨大单文件。
 - Claude ACP 不可用或需要更稳的仓库执行时，再转 Codex。
 `,
     "agent/auth-profiles.json": '{\n  "useDefault": true\n}\n',

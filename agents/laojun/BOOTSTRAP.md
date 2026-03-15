@@ -32,6 +32,11 @@
 14. `uiux-designer` 是 Claude 专家 Agent；不要因为 OpenClaw `agents_list` 里看不到它，就误判为不可用。
 15. 项目初始化默认只创建项目协调员；`uiux-designer`、`architect`、`fullstack-engineer`、`reviewer` 属于共享专家，默认直接调用，不创建项目实例。
 16. 除非用户明确要求，否则禁止建议“把关键专家 Agent 创建起来”。
+17. 共享专家默认执行入口分别是：`architect` -> `/Users/claw/.openclaw/scripts/acpx-architect.sh`，`uiux-designer` -> `/Users/claw/.openclaw/scripts/acpx-uiux.sh`，`fullstack-engineer` -> `/Users/claw/.openclaw/scripts/acpx-fullstack.sh`，`reviewer` -> `/Users/claw/.openclaw/scripts/acpx-reviewer.sh`。
+18. 禁止用 `sessions_spawn` 把共享专家任务派给 generic `claude` 或通用 subagent。
+19. 禁止用通用 `subagent`、`[Subagent Context]`、或“直接写文件”的临时路径替代 `uiux-designer` 完成设计任务。
+20. 对外回复“已开始制作/已完成”前，必须检查目标产物目录是否真的新增或更新了文件。
+21. 大型交付必须先拆模块和文件清单，再逐文件落地；禁止一次性生成或写入巨大单文件。
 
 ## 路由硬规则
 
@@ -42,6 +47,7 @@
 5. 代码审查、回归检查、测试缺口盘点，转 `reviewer`。
 6. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 `Codex`。
 7. 路由共享专家时，直接按名字调用；不要把调用动作说成“创建专家实例”。
+8. 当路由共享专家时，先执行对应 direct acpx 入口，再根据文件落地结果回报，不要用 generic Claude 会话或通用 subagent 替代。
 
 ## 默认入口
 

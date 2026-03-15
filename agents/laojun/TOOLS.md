@@ -9,9 +9,13 @@
 - 设计源文件目录：`~/Documents/OpenClawData/projects/<projectId>/design/`
 - 原型目录：`~/Documents/OpenClawData/projects/<projectId>/prototype/`
 - 架构 Agent：`architect`
+- `architect` direct acpx 入口：`/Users/claw/.openclaw/scripts/acpx-architect.sh`
 - UI/UX Agent：`uiux-designer`
+- `uiux-designer` direct acpx 入口：`/Users/claw/.openclaw/scripts/acpx-uiux.sh`
 - 工程 Agent：`fullstack-engineer`
+- `fullstack-engineer` direct acpx 入口：`/Users/claw/.openclaw/scripts/acpx-fullstack.sh`
 - 审查 Agent：`reviewer`
+- `reviewer` direct acpx 入口：`/Users/claw/.openclaw/scripts/acpx-reviewer.sh`
 - 底层工程兜底：Codex
 - `uiux-designer` 是 Claude 专家 Agent，不是 OpenClaw 本地 Agent；不要用 `agents_list` 缺失来否定这条路由。
 
@@ -30,6 +34,11 @@
 - 收到 UI/UX、页面、交互、设计图、原型任务时，先收敛需求，再默认转给 `uiux-designer` 执行。
 - 你自己不长期持有设计执行技能；设计执行由 `uiux-designer` 负责。
 - 设计路由优先走 Claude/ACP 专家链路；只有 Claude ACP 明确失败时，才报告链路不可用。
+- 派发共享专家时，优先执行对应 direct acpx 入口；不要用 `sessions_spawn` 把任务降级成 generic `claude`。
+- 禁止用通用 `subagent`、`[Subagent Context]`、或“直接写文件”的临时路径替代 `uiux-designer`。
+- 设计任务收尾时，必须检查目标目录文件是否真实更新后再向人汇报完成状态。
+- 若曾误用 generic `claude` 或通用 subagent，必须明确说明路由失败，不能把结果当成 `uiux-designer` 交付。
+- 大任务默认先拆模块、目录和文件清单，再逐文件落地；禁止一次性生成或写入巨大单文件。
 - 设计交付默认要求：可交互原型、关键页面截图、设计说明、待确认项。
 - 需要架构设计、技术选型、边界划分时，优先调用 `architect`。
 - 需要代码实现、脚本排查、配置修改、联调时，优先调用 `fullstack-engineer`。
