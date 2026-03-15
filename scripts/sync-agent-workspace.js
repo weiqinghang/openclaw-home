@@ -78,7 +78,12 @@ function resolveSourceDir(agent) {
 
 function resolveSkillSet(agent) {
   if (AGENT_SKILLSETS[agent.id]) return AGENT_SKILLSETS[agent.id];
-  if (agent.kind === "project" || agent.projectRoot) {
+  const looksLikeProjectAgent =
+    agent.kind === "project" ||
+    Boolean(agent.projectRoot) ||
+    (typeof agent.agentDir === "string" && agent.agentDir.includes("/Documents/OpenClawData/projects/")) ||
+    (typeof agent.workspace === "string" && agent.workspace.includes("/Documents/OpenClawData/projects/"));
+  if (looksLikeProjectAgent) {
     return DEFAULT_PROJECT_SKILLSET;
   }
   return [];

@@ -129,3 +129,56 @@ test("syncs laojun without UI delivery skills", () => {
     ]
   );
 });
+
+test("syncs project agents with default project skillset", () => {
+  const homeDir = makeTempHome();
+  const rootDir = path.join(homeDir, ".openclaw");
+  const dataRoot = path.join(homeDir, "Documents", "OpenClawData");
+  const projectRoot = path.join(homeDir, "Documents", "OpenClawData", "projects", "alpha");
+
+  writeJson(path.join(rootDir, "openclaw.json"), {
+    agents: {
+      list: [
+        {
+          id: "alpha",
+          workspace: path.join(projectRoot, ".runtime", "openclaw", "workspace"),
+          agentDir: path.join(projectRoot, "agent")
+        }
+      ]
+    }
+  });
+
+  writeFile(path.join(projectRoot, "agent", "AGENTS.md"), "# alpha\n");
+  writeFile(path.join(rootDir, "docs", "agents", "shared-safety-charter.md"), "# safety\n");
+
+  for (const skillName of [
+    "find-skills",
+    "summarize",
+    "spec-kit-workflow",
+    "openspec-workflow",
+    "extreme-programming"
+  ]) {
+    writeFile(path.join(rootDir, "core", "skills", skillName, "SKILL.md"), `# ${skillName}\n`);
+  }
+
+  const result = spawnSync("node", [SCRIPT, "alpha"], {
+    cwd: REPO_ROOT,
+    encoding: "utf8",
+    env: {
+      ...process.env,
+      HOME: homeDir
+    }
+  });
+
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(
+    listDirNames(path.join(projectRoot, ".runtime", "openclaw", "workspace", "skills")),
+    [
+      "extreme-programming",
+      "find-skills",
+      "openspec-workflow",
+      "spec-kit-workflow",
+      "summarize"
+    ]
+  );
+});

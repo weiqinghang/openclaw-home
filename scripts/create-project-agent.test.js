@@ -175,6 +175,9 @@ test("creates a new project under externalized project root with externalized ru
   const project = registry.projects.alpha;
   const toolsContent = fs.readFileSync(path.join(projectRoot, "agent", "TOOLS.md"), "utf8");
   const agentsContent = fs.readFileSync(path.join(projectRoot, "agent", "AGENTS.md"), "utf8");
+  const models = readJson(path.join(projectRoot, "agent", "models.json"));
+  const authProfiles = readJson(path.join(projectRoot, "agent", "auth-profiles.json"));
+  const skillsDir = path.join(runtimeRoot, "workspace", "skills");
 
   assert.equal(project.projectRoot, projectRoot);
   assert.equal(project.runtimeRoot, runtimeRoot);
@@ -186,18 +189,64 @@ test("creates a new project under externalized project root with externalized ru
   assert.equal(project.branchName, "");
   assert.ok(fs.existsSync(path.join(projectRoot, "agent", "AGENTS.md")));
   assert.ok(fs.existsSync(path.join(projectRoot, "docs", "prd.md")));
+  assert.ok(fs.existsSync(path.join(projectRoot, "docs", "delivery-state.md")));
+  assert.ok(fs.existsSync(path.join(projectRoot, "docs", "task-package.md")));
   assert.ok(fs.existsSync(path.join(projectRoot, "docs", "design", "README.md")));
   assert.ok(fs.existsSync(path.join(projectRoot, "design", "README.md")));
   assert.ok(fs.existsSync(path.join(projectRoot, "prototype", "README.md")));
   assert.ok(fs.existsSync(path.join(runtimeRoot, "workspace", "AGENTS.md")));
+  assert.deepEqual(fs.readdirSync(skillsDir).sort(), [
+    "extreme-programming",
+    "find-skills",
+    "openspec-workflow",
+    "spec-kit-workflow",
+    "summarize"
+  ]);
 
   const config = readJson(path.join(rootDir, "openclaw.json"));
   const agent = config.agents.list.find((item) => item.id === "alpha");
   assert.equal(agent.agentDir, path.join(projectRoot, "agent"));
   assert.equal(agent.workspace, path.join(runtimeRoot, "workspace"));
   assert.match(toolsContent, /UI\/UX Agent：`uiux-designer`/);
-  assert.match(toolsContent, /专业任务默认转给专家 Agent/);
+  assert.match(toolsContent, /专业任务默认转给共享专家 Agent/);
   assert.match(agentsContent, /UI\/UX、页面设计、原型制作、Figma 实现 -> `uiux-designer`/);
+  assert.equal(models.providers["anthropic-proxy"].baseUrl, "https://ai-llm-proxy.tarstech.com");
+  assert.equal(authProfiles.profiles["anthropic-proxy:default"].provider, "anthropic-proxy");
+});
+
+test("bootstraps an existing local project in place", () => {
+  const homeDir = makeTempHome();
+  const rootDir = initRepoRoot(homeDir);
+  const projectRoot = path.join(homeDir, "Documents", "OpenClawData", "projects", "alpha");
+
+  writeFile(path.join(projectRoot, "README.md"), "# alpha\n");
+  writeFile(path.join(projectRoot, ".git", "HEAD"), "ref: refs/heads/main\n");
+
+  const result = runNode(
+    [
+      "alpha",
+      "--project-name",
+      "Alpha 项目",
+      "--source-mode",
+      "existing-local"
+    ],
+    {
+      env: {
+        ...process.env,
+        HOME: homeDir
+      }
+    }
+  );
+
+  assert.equal(result.status, 0, result.stderr);
+
+  const registry = readJson(path.join(rootDir, "ops", "project-registry.json"));
+  const config = readJson(path.join(rootDir, "openclaw.json"));
+  const agent = config.agents.list.find((item) => item.id === "alpha");
+
+  assert.equal(registry.projects.alpha.sourceMode, "existing-local");
+  assert.ok(fs.existsSync(path.join(projectRoot, "agent", "AGENTS.md")));
+  assert.ok(fs.existsSync(path.join(projectRoot, ".runtime", "openclaw", "workspace", "AGENTS.md")));
 });
 
 test("clones existing gitlab project, creates compliant branch, and records git metadata", () => {

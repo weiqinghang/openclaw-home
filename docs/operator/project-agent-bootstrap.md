@@ -1,6 +1,6 @@
 # 项目 Agent 初始化
 
-目标：为新项目创建专属维护 Agent，并把它注册到 OpenClaw。
+目标：为项目创建专属维护 Agent，并把它注册到 OpenClaw。
 
 ## 目录约定
 
@@ -47,7 +47,7 @@ node scripts/create-project-agent.js alpha --project-name "Alpha 项目" --group
 node scripts/create-project-agent.js alpha --project-name "Alpha 项目"
 ```
 
-旧项目需要补远程仓库，并一次完成 clone、建分支、remote 配置：
+旧项目若要同时接远程仓库，使用：
 
 ```bash
 node scripts/create-project-agent.js alpha \
@@ -55,23 +55,49 @@ node scripts/create-project-agent.js alpha \
   --source-mode existing \
   --git-remote "git@git.tarsocial.com:team/alpha.git" \
   --spec trade \
-  --topic bootstrap
+ --topic bootstrap
+```
+
+已存在于本机的项目，使用原地 bootstrap：
+
+```bash
+node scripts/create-project-agent.js alpha \
+  --project-name "Alpha 项目" \
+  --source-mode existing-local
 ```
 
 规则：
 
 1. 默认项目根目录是 `~/Documents/OpenClawData/projects/<projectId>/`
 2. 可用 `--project-root` 覆盖默认路径
-3. 内部 GitLab `git.tarsocial.com` 分支格式：`feature/<spec>-<topic>`
-4. 内部 GitLab 禁止直推 `develop` / `devuat` / `product`
-5. GitHub / 其他仓库默认分支格式：`codex/<spec>-<topic>`
+3. `source-mode=new` 用于全新项目目录
+4. `source-mode=existing` 用于需要 clone 远程仓库的旧项目
+5. `source-mode=existing-local` 用于本机已存在、要补建项目维护 Agent 的项目
+6. 内部 GitLab `git.tarsocial.com` 分支格式：`feature/<spec>-<topic>`
+7. 内部 GitLab 禁止直推 `develop` / `devuat` / `product`
+8. GitHub / 其他仓库默认分支格式：`codex/<spec>-<topic>`
 
 ## 使用规则
 
-1. 首席产品官 `laojun`（昵称太上老君）负责对外接活、产品收敛与项目初始化。
+1. 首席产品官 `laojun`（昵称太上老君）负责对外接活、产品收敛与项目初始化 gate。
 2. 每个项目维护 Agent 只服务自己的项目。
 3. 软件工程类任务必须先在 `spec-kit-workflow` 与 `openspec-workflow` 中二选一。
 4. 项目维护 Agent 默认不直接绑定飞书，由首席产品官代理对外。
+5. 群已绑定项目，不代表项目已初始化完成；初始化完成必须包含项目维护 Agent 已创建并注册。
+
+## 初始化完成判据
+
+至少同时满足：
+
+1. `projectId / projectName` 明确
+2. 群绑定成立
+3. `ops/project-registry.json` 有项目记录
+4. `openclaw.json` 已注册项目维护 Agent
+5. `~/Documents/OpenClawData/projects/<projectId>/agent/` 已生成
+6. `~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/workspace/` 已生成
+7. `docs/`、`design/`、`prototype/` 基础骨架存在
+
+只要任一项缺失，老君都应停在“初始化补齐模式”，而不是直接进入项目执行。
 
 ## 群初始化约定
 

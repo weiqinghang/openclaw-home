@@ -1,4 +1,24 @@
 {
   "version": 1,
-  "projects": {}
+  "projects": {
+    "star-steps": {
+      "projectId": "star-steps",
+      "projectName": "小步星球",
+      "groupId": "oc_d41755f2043cc0dd8036e4c3e1d1b3b8",
+      "owner": "laojun",
+      "ownerUserId": "ou_d14f52a10cdf41c0420c59a273ccad61",
+      "workspace": "/Users/claw/Documents/OpenClawData/projects/star-steps/.runtime/openclaw/workspace",
+      "agentDir": "/Users/claw/Documents/OpenClawData/projects/star-steps/agent",
+      "projectRoot": "/Users/claw/Documents/OpenClawData/projects/star-steps",
+      "runtimeRoot": "/Users/claw/Documents/OpenClawData/projects/star-steps/.runtime/openclaw",
+      "sourceMode": "existing-local",
+      "gitRemote": "",
+      "vcsProvider": "none",
+      "branchName": "",
+      "agentId": "star-steps",
+      "status": "active",
+      "kind": "project",
+      "createdAt": "2026-03-15T07:08:36.196Z"
+    }
+  }
 }

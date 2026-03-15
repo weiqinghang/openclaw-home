@@ -42,6 +42,35 @@ node scripts/create-project-agent.js <projectId> \
 
 6. 在群里再发一条**全新消息**
 
+## 绑定成功后不要跳过的一步
+
+群绑定成功，只说明老君知道“这个群属于哪个项目”。  
+这**不等于**项目已经完成初始化。
+
+继续检查：
+
+1. `ops/project-registry.json` 是否已有该项目
+2. `openclaw.json` 是否已有对应项目维护 Agent
+3. `~/Documents/OpenClawData/projects/<projectId>/agent/` 是否存在
+4. `~/Documents/OpenClawData/projects/<projectId>/.runtime/openclaw/workspace/` 是否存在
+
+若缺任何一项，应立即执行项目维护 Agent bootstrap，而不是直接开始项目内任务分派。
+
+推荐命令：
+
+```bash
+node scripts/create-project-agent.js <projectId> \
+  --project-name "<项目名>" \
+  --group-id "<群ID>" \
+  --owner-user-id "<ownerUserId>" \
+  --source-mode existing-local
+```
+
+适用：
+
+- 项目目录已在本机存在
+- 只是缺项目维护 Agent / registry / runtime
+
 ## 这次验证出的根因
 
 `openclaw.json` 顶层 `channels.feishu.groupAllowFrom/groups` 在多账号 Feishu 模式下不够。  

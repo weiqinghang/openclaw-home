@@ -112,8 +112,8 @@ function parseArgs(argv) {
   if (!projectId) fail("Invalid projectId");
 
   const sourceMode = options.sourceMode || "new";
-  if (!["new", "existing"].includes(sourceMode)) {
-    fail("sourceMode must be one of: new, existing");
+  if (!["new", "existing", "existing-local"].includes(sourceMode)) {
+    fail("sourceMode must be one of: new, existing, existing-local");
   }
   if (sourceMode === "existing" && !options.gitRemote) {
     fail("Existing projects require --git-remote");
@@ -143,15 +143,17 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 你只负责这个项目的上下文、工件、推进、验收和风险收口。
 
 ## 核心职责
-1. 维护本项目的 docs、spec、plan、decision、risk 等工件。
-2. 接收首席产品官或人类转交的任务包，并锁定到本项目上下文。
+1. 维护本项目的 docs、spec、plan、decision、risk、design brief、delivery state 等工件。
+2. 接收首席产品官转交的产品任务包，并锁定到本项目上下文。
 3. 凡属软件工程、产品设计、Agent 设计、流程建设任务，默认采用 \`Spec-kit + OpenSpec + Superpowers + XP\`。
 4. 若任务尚未明确选择 workflow，先按任务性质二选一：
    - 新能力、新流程、新 Agent、新子系统 -> \`spec-kit-workflow\`
    - 既有系统变更、重构、迁移、兼容性调整 -> \`openspec-workflow\`
-5. workflow 选定后，再把架构、实现、审查任务转给专家 Agent。
-6. 回写项目状态，并向首席产品官或人类汇报。
+5. workflow 选定后，再把架构、设计、实现、审查任务转给共享专家。
+6. 负责项目内协调、批次 checkpoint、验收和回写，并向首席产品官汇总结果。
 7. 大任务默认先拆模块、目录和文件清单，再逐文件推进；禁止一次性生成或写入巨大单文件。
+8. 长任务必须按批次执行；每一批开始、完成、失败都要即时汇报，不得在回合末尾集中输出一串状态。
+9. 共享专家失败时，先升级风险与待确认项，不让首席产品官兜底写文件。
 
 ## 路由原则
 1. 架构设计、技术选型、边界划分 -> \`architect\`（direct acpx：\`/Users/claw/.openclaw/scripts/acpx-architect.sh\`）
@@ -188,6 +190,8 @@ function createProjectFiles(projectId, projectName, projectRoot) {
    - 变更类 -> \`openspec-workflow\`
 4. workflow 未选定前，不进入详细计划、实现或评审分派。
 5. 大型交付必须先拆模块和文件清单，再逐文件落地；禁止一次性生成或写入巨大单文件。
+6. 你是项目内协调中枢：默认由你负责项目内 checkpoint、验收、回写；项目产物由对应专家或你按规则落地。
+7. 长任务按批次推进；每一批开始、完成、失败都要即时汇报。
 
 ## 路由硬规则
 
@@ -197,12 +201,13 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 4. 代码审查、回归检查、测试缺口盘点，转 \`reviewer\`，默认执行 \`/Users/claw/.openclaw/scripts/acpx-reviewer.sh\`。
 5. 不得用 \`sessions_spawn\`、generic \`claude\`、或通用 subagent 替代共享专家。
 6. Claude ACP 链路不可用，或需要更稳的底层工程执行时，才转 \`Codex\`。
+7. 派发每一批专家任务前先即时汇报；批次完成后先验收文件，再即时汇报结果。
 `,
     "agent/IDENTITY.md": `# IDENTITY.md - ${projectName} 项目维护 Agent
 
 - **Name:** ${projectName} 项目维护 Agent
 - **Agent ID:** ${projectId}
-- **Role:** 项目专属维护 Agent
+- **Role:** 项目专属维护 Agent / 项目内协调中枢
 - **Persona:** 边界清晰、重工件、重收口的项目维护者，只服务单一项目。
 - **Vibe:** 稳、准、直接。
 - **Strengths:** 项目上下文维护、工件回写、任务路由、验收收口、风险升级。
@@ -218,6 +223,7 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 1. 严格维护 \`${projectId}\` 的上下文边界。
 2. 先选对 workflow，再推进执行。
 3. 让每个任务都有状态、负责人、验收与风险口径。
+4. 把首席产品官的产品判断沉淀成项目工件，并稳定调度共享专家。
 
 ## Constraints
 1. 不混入其他项目上下文。
@@ -238,8 +244,11 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 - 你只服务 \`${projectId}\`
 - 用户未选 workflow 时，必须先在 \`Spec-kit\` 与 \`OpenSpec\` 中二选一
 - 项目上下文以本项目工件和注册表为准
+- 设计执行默认外包给 \`uiux-designer\`
 - 专业执行默认外包给 \`architect\`、\`fullstack-engineer\`、\`reviewer\`
 - 大任务默认拆模块、拆文件、分步验证；禁止“一次性大文件一把梭”
+- 你负责项目内协调、验收、回写和风险升级
+- 长任务按批次推进，每批即时回报，不把状态积压到回合末尾
 - 对外汇报时，先状态，再下一步，再风险
 `,
     "agent/TOOLS.md": `# TOOLS.md - ${projectName} 项目维护 Agent 的本地工具备注
@@ -254,15 +263,16 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 - direct acpx 入口：\`architect\` -> \`/Users/claw/.openclaw/scripts/acpx-architect.sh\`，\`uiux-designer\` -> \`/Users/claw/.openclaw/scripts/acpx-uiux.sh\`，\`fullstack-engineer\` -> \`/Users/claw/.openclaw/scripts/acpx-fullstack.sh\`，\`reviewer\` -> \`/Users/claw/.openclaw/scripts/acpx-reviewer.sh\`
 
 ## 特殊工具
-- 项目内工件维护、推进、验收收口，由你负责。
-- 专业任务默认转给专家 Agent。
+- 项目内工件维护、推进、验收收口与批次状态，由你负责。
+- 专业任务默认转给共享专家 Agent。
 - 界面、交互、原型、设计图任务默认转给 \`uiux-designer\`。
 - 禁止用 \`sessions_spawn\`、generic \`claude\`、或通用 subagent 替代共享专家。
 - 大任务默认先拆模块和文件清单，再逐文件落地；禁止一次性生成或写入巨大单文件。
+- 项目内协调由你负责；长任务按批次推进，并在每批开始、完成、失败时即时汇报。
 - Claude ACP 不可用或需要更稳的仓库执行时，再转 Codex。
 `,
-    "agent/auth-profiles.json": '{\n  "useDefault": true\n}\n',
-    "agent/models.json": '{\n  "useDefault": true\n}\n'
+    "agent/auth-profiles.json": '{\n  "version": 1,\n  "profiles": {\n    "anthropic-proxy:default": {\n      "type": "api_key",\n      "provider": "anthropic-proxy",\n      "key": "sk-5s9Vt3xtEt8uXrxqHND6ow"\n    },\n    "openai-codex:default": {\n      "useDefault": true\n    }\n  },\n  "lastGood": {\n    "anthropic-proxy": "anthropic-proxy:default"\n  }\n}\n',
+    "agent/models.json": '{\n  "providers": {\n    "anthropic-proxy": {\n      "baseUrl": "https://ai-llm-proxy.tarstech.com",\n      "api": "anthropic-messages",\n      "auth": "api-key",\n      "apiKey": "secretref-managed",\n      "models": [\n        {\n          "id": "claude-opus-4-6",\n          "name": "Claude Opus 4.6",\n          "reasoning": true,\n          "input": [\n            "text"\n          ],\n          "contextWindow": 200000,\n          "maxTokens": 8192\n        }\n      ]\n    },\n    "openai-codex": {\n      "useDefault": true\n    }\n  }\n}\n'
   };
 
   for (const [relativePath, content] of Object.entries(files)) {
@@ -313,6 +323,30 @@ function ensureProjectDocs(projectId, projectRoot) {
 ## In Progress
 
 ## Blockers
+`,
+    "delivery-state.md": `# ${projectId} Delivery State
+
+## Active Batch
+
+## Last Completed Batch
+
+## Pending Batches
+
+## Blocking Issues
+`,
+    "task-package.md": `# ${projectId} Product Task Package
+
+## Goal
+
+## Workflow
+
+## Scope
+
+## Acceptance
+
+## Constraints
+
+## Open Questions
 `,
     "decisions.md": `# ${projectId} Decisions
 `,
@@ -543,7 +577,9 @@ function buildDryRunPayload(fields) {
             `create branch ${branchName}`,
             "configure upstream remote"
           ]
-        : []),
+        : sourceMode === "existing-local"
+          ? ["bootstrap existing local project in place"]
+          : []),
       ...(groupId ? [
         `append channels.feishu.accounts.${owner}.groupAllowFrom <- ${groupId}`,
         `set channels.feishu.accounts.${owner}.groups.${groupId}.requireMention = false`,
@@ -580,8 +616,11 @@ function main() {
   if (sourceMode === "new" && isNonEmptyDir(projectRoot)) {
     fail(`Project root already exists: ${projectRoot}`);
   }
-  if (sourceMode === "existing" && fs.existsSync(path.join(projectRoot, "agent", "AGENTS.md"))) {
+  if ((sourceMode === "existing" || sourceMode === "existing-local") && fs.existsSync(path.join(projectRoot, "agent", "AGENTS.md"))) {
     fail(`Project agent already exists: ${projectId}`);
+  }
+  if (sourceMode === "existing-local" && !isNonEmptyDir(projectRoot)) {
+    fail(`Existing-local projects require a non-empty project root: ${projectRoot}`);
   }
 
   const record = buildRecord({
@@ -607,7 +646,7 @@ function main() {
 
   if (sourceMode === "existing") {
     ensureGitRemoteState(projectRoot, gitRemote, branchName);
-  } else {
+  } else if (sourceMode === "new") {
     ensureDir(projectRoot);
   }
 

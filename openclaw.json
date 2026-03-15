@@ -31,12 +31,19 @@
         "provider": "minimax-cn",
         "mode": "api_key"
       },
+      "anthropic-proxy:default": {
+        "provider": "anthropic-proxy",
+        "mode": "api_key"
+      },
       "openai-codex:default": {
         "provider": "openai-codex",
         "mode": "oauth"
       }
     },
     "order": {
+      "anthropic-proxy": [
+        "anthropic-proxy:default"
+      ],
       "openai-codex": [
         "openai-codex:default"
       ]
@@ -62,6 +69,22 @@
               "cacheRead": 0.03,
               "cacheWrite": 0.12
             },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      },
+      "anthropic-proxy": {
+        "baseUrl": "https://ai-llm-proxy.tarstech.com",
+        "api": "anthropic-messages",
+        "models": [
+          {
+            "id": "claude-opus-4-6",
+            "name": "Claude Opus 4.6",
+            "reasoning": true,
+            "input": [
+              "text"
+            ],
             "contextWindow": 200000,
             "maxTokens": 8192
           }
@@ -114,7 +137,10 @@
         },
         "tools": {
           "deny": [
-            "sessions_spawn"
+            "sessions_spawn",
+            "write",
+            "edit",
+            "apply_patch"
           ]
         }
       },
@@ -132,6 +158,11 @@
         "id": "guichengxiang",
         "workspace": "/Users/claw/Documents/OpenClawData/agents/guichengxiang/workspace",
         "agentDir": "/Users/claw/.openclaw/agents/guichengxiang/agent"
+      },
+      {
+        "id": "star-steps",
+        "workspace": "/Users/claw/Documents/OpenClawData/projects/star-steps/.runtime/openclaw/workspace",
+        "agentDir": "/Users/claw/Documents/OpenClawData/projects/star-steps/agent"
       }
     ]
   },
