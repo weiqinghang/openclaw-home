@@ -358,7 +358,8 @@
           "groupPolicy": "allowlist",
           "groupAllowFrom": [
             "oc_80b74bf98481131ff1fc8c1b1308d0dd",
-            "oc_d41755f2043cc0dd8036e4c3e1d1b3b8"
+            "oc_d41755f2043cc0dd8036e4c3e1d1b3b8",
+            "oc_42ddd435939a4477751a36105191891e"
           ],
           "groups": {
             "oc_80b74bf98481131ff1fc8c1b1308d0dd": {
@@ -372,6 +373,12 @@
               "allowFrom": [
                 "ou_d14f52a10cdf41c0420c59a273ccad61",
                 "ou_1b2c15789422217be9f6474be481c717"
+              ]
+            },
+            "oc_42ddd435939a4477751a36105191891e": {
+              "requireMention": false,
+              "allowFrom": [
+                "ou_d14f52a10cdf41c0420c59a273ccad61"
               ]
             }
           }
