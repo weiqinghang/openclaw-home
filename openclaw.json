@@ -72,11 +72,14 @@
   "agents": {
     "defaults": {
       "model": {
-        "primary": "openai-codex/gpt-5.4"
+        "primary": "anthropic-proxy/claude-opus-4-6"
       },
       "models": {
         "minimax-cn/MiniMax-M2.5": {
           "alias": "Minimax"
+        },
+        "anthropic-proxy/claude-opus-4-6": {
+          "alias": "Claude"
         },
         "openai-codex/gpt-5.3-codex": {},
         "openai-codex/gpt-5.4": {
@@ -105,7 +108,10 @@
       {
         "id": "laojun",
         "workspace": "/Users/claw/Documents/OpenClawData/agents/laojun/workspace",
-        "agentDir": "/Users/claw/.openclaw/agents/laojun/agent"
+        "agentDir": "/Users/claw/.openclaw/agents/laojun/agent",
+        "model": {
+          "primary": "anthropic-proxy/claude-opus-4-6"
+        }
       },
       {
         "id": "taibai",

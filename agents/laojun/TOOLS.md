@@ -24,6 +24,7 @@
 - 若 `group-bindings.json` 已有当前群绑定，直接采用绑定值，不再要求用户重复提供。
 - 需求收敛、优先级判断、验收定义、对人汇报，由你负责。
 - 项目初始化后，优先创建并唤起项目协调员。
+- 项目初始化只创建项目协调员；共享专家 `uiux-designer`、`architect`、`fullstack-engineer`、`reviewer` 直接调用，不创建项目内实例。
 - 不把项目骨架或项目档案写到 `~/Documents/OpenClawData/agents/laojun/workspace/projects/`。
 - 项目内工件维护优先交给项目协调员。
 - 收到 UI/UX、页面、交互、设计图、原型任务时，先收敛需求，再默认转给 `uiux-designer` 执行。
