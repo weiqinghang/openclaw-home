@@ -272,7 +272,16 @@ function createProjectFiles(projectId, projectName, projectRoot) {
 - Claude ACP 不可用或需要更稳的仓库执行时，再转 Codex。
 `,
     "agent/auth-profiles.json": '{\n  "version": 1,\n  "profiles": {\n    "anthropic-proxy:default": {\n      "type": "api_key",\n      "provider": "anthropic-proxy",\n      "key": "sk-5s9Vt3xtEt8uXrxqHND6ow"\n    },\n    "openai-codex:default": {\n      "useDefault": true\n    }\n  },\n  "lastGood": {\n    "anthropic-proxy": "anthropic-proxy:default"\n  }\n}\n',
-    "agent/models.json": '{\n  "providers": {\n    "anthropic-proxy": {\n      "baseUrl": "https://ai-llm-proxy.tarstech.com",\n      "api": "anthropic-messages",\n      "auth": "api-key",\n      "apiKey": "secretref-managed",\n      "models": [\n        {\n          "id": "claude-opus-4-6",\n          "name": "Claude Opus 4.6",\n          "reasoning": true,\n          "input": [\n            "text"\n          ],\n          "contextWindow": 200000,\n          "maxTokens": 8192\n        }\n      ]\n    },\n    "openai-codex": {\n      "useDefault": true\n    }\n  }\n}\n'
+    "agent/models.json": '{\n  "providers": {\n    "anthropic-proxy": {\n      "baseUrl": "https://ai-llm-proxy.tarstech.com",\n      "api": "anthropic-messages",\n      "auth": "api-key",\n      "apiKey": "secretref-managed",\n      "models": [\n        {\n          "id": "claude-opus-4-6",\n          "name": "Claude Opus 4.6",\n          "reasoning": true,\n          "input": [\n            "text"\n          ],\n          "contextWindow": 200000,\n          "maxTokens": 8192\n        }\n      ]\n    },\n    "openai-codex": {\n      "useDefault": true\n    }\n  }\n}\n',
+    "agent/skills.json": JSON.stringify({
+      skills: [
+        "find-skills",
+        "summarize",
+        "spec-kit-workflow",
+        "openspec-workflow",
+        "extreme-programming"
+      ]
+    }, null, 2) + "\n"
   };
 
   for (const [relativePath, content] of Object.entries(files)) {
@@ -566,7 +575,7 @@ function buildDryRunPayload(fields) {
     vcsProvider,
     branchName,
     actions: [
-      `create ${projectRoot}/agent/`,
+      `create ${projectRoot}/agent/ (including skills.json)`,
       `create ${projectRoot}/docs/`,
       `create runtime ${runtimeRoot}/`,
       "update ops/project-registry.json",

@@ -41,7 +41,6 @@ const AGENT_SKILLSETS = {
     "summarize",
     "spec-kit-workflow",
     "openspec-workflow",
-    "extreme-programming"
   ],
   taibai: ["trade-operations-workflow"],
   guanyin: [],
@@ -77,7 +76,19 @@ function resolveSourceDir(agent) {
 }
 
 function resolveSkillSet(agent) {
+  // 1. 固定 Agent 硬编码 skillset
   if (AGENT_SKILLSETS[agent.id]) return AGENT_SKILLSETS[agent.id];
+
+  // 2. 项目级 skills.json
+  if (agent.agentDir) {
+    const skillsFile = path.join(agent.agentDir, "skills.json");
+    if (fs.existsSync(skillsFile)) {
+      const data = JSON.parse(fs.readFileSync(skillsFile, "utf8"));
+      if (Array.isArray(data.skills)) return data.skills;
+    }
+  }
+
+  // 3. 项目 Agent 默认
   const looksLikeProjectAgent =
     agent.kind === "project" ||
     Boolean(agent.projectRoot) ||
