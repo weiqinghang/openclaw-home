@@ -1,7 +1,7 @@
 {
   "meta": {
-    "lastTouchedVersion": "2026.3.8",
-    "lastTouchedAt": "2026-03-10T16:12:13.359Z"
+    "lastTouchedVersion": "2026.3.13",
+    "lastTouchedAt": "2026-03-17T15:47:10.654Z"
   },
   "wizard": {
     "lastRunAt": "2026-03-07T17:10:47.726Z",
@@ -31,18 +31,19 @@
         "provider": "minimax-cn",
         "mode": "api_key"
       },
-      "anthropic-proxy:default": {
-        "provider": "anthropic-proxy",
-        "mode": "api_key"
-      },
       "openai-codex:default": {
         "provider": "openai-codex",
         "mode": "oauth"
+      },
+      "anthropic:manual": {
+        "provider": "anthropic",
+        "mode": "token"
       }
     },
     "order": {
-      "anthropic-proxy": [
-        "anthropic-proxy:default"
+      "anthropic": [
+        "anthropic:manual",
+        "anthropic:default"
       ],
       "openai-codex": [
         "openai-codex:default"
@@ -73,35 +74,19 @@
             "maxTokens": 8192
           }
         ]
-      },
-      "anthropic-proxy": {
-        "baseUrl": "https://ai-llm-proxy.tarstech.com",
-        "api": "anthropic-messages",
-        "models": [
-          {
-            "id": "claude-opus-4-6",
-            "name": "Claude Opus 4.6",
-            "reasoning": true,
-            "input": [
-              "text"
-            ],
-            "contextWindow": 200000,
-            "maxTokens": 8192
-          }
-        ]
       }
     }
   },
   "agents": {
     "defaults": {
       "model": {
-        "primary": "anthropic-proxy/claude-opus-4-6"
+        "primary": "anthropic/claude-opus-4-6"
       },
       "models": {
         "minimax-cn/MiniMax-M2.5": {
           "alias": "Minimax"
         },
-        "anthropic-proxy/claude-opus-4-6": {
+        "anthropic/claude-opus-4-6": {
           "alias": "Claude"
         },
         "openai-codex/gpt-5.3-codex": {},
@@ -136,7 +121,7 @@
         "workspace": "/Users/claw/Documents/OpenClawData/agents/laojun/workspace",
         "agentDir": "/Users/claw/.openclaw/agents/laojun/agent",
         "model": {
-          "primary": "anthropic-proxy/claude-opus-4-6"
+          "primary": "anthropic/claude-opus-4-6"
         },
         "tools": {
           "deny": [
@@ -170,15 +155,6 @@
     ]
   },
   "tools": {
-    "agentToAgent": {
-      "enabled": true,
-      "allow": [
-        "*"
-      ]
-    },
-    "sessions": {
-      "visibility": "all"
-    },
     "web": {
       "search": {
         "enabled": true
@@ -186,6 +162,15 @@
       "fetch": {
         "enabled": true
       }
+    },
+    "sessions": {
+      "visibility": "all"
+    },
+    "agentToAgent": {
+      "enabled": true,
+      "allow": [
+        "*"
+      ]
     }
   },
   "bindings": [

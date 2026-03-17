@@ -40,7 +40,7 @@ const MIME_TYPES = {
   ".woff2": "font/woff2",
   ".ttf": "font/ttf",
   ".pdf": "application/pdf",
-  ".md": "text/plain; charset=utf-8",
+  ".md": "text/markdown; charset=utf-8",
 };
 
 function getMime(filePath) {
@@ -142,6 +142,90 @@ ${cards || "<p>No projects found.</p>"}
 </body></html>`;
 }
 
+/**
+ * Render a Markdown file as rich HTML.
+ * Markdown parsing is done server-side with marked (no CDN dependency).
+ * Mermaid diagrams are rendered client-side via CDN.
+ */
+const { marked, Renderer } = require("marked");
+
+const mdRenderer = new Renderer();
+const origCode = mdRenderer.code.bind(mdRenderer);
+mdRenderer.code = function(code, lang) {
+  if (typeof code === "object") { lang = code.lang; code = code.text; }
+  if (lang === "mermaid") {
+    return '<div class="mermaid">' + code + "</div>";
+  }
+  const escaped = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return '<pre><code class="language-' + (lang || "") + '">' + escaped + "</code></pre>";
+};
+marked.setOptions({ renderer: mdRenderer, gfm: true, breaks: false });
+
+function renderMarkdown(filePath, urlPath) {
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const fileName = path.basename(filePath);
+  const htmlBody = marked.parse(raw);
+
+  const breadcrumb = urlPath.split("/").filter(Boolean).map((seg, i, arr) => {
+    const href = "/" + arr.slice(0, i + 1).join("/") + (i < arr.length - 1 ? "/" : "");
+    return ' / <a href="' + href + '">' + seg + "</a>";
+  }).join("");
+
+  return `<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${fileName}</title>
+<style>
+  body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 32px 60px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: #1f2328;
+    background: #fff;
+    line-height: 1.6;
+  }
+  .breadcrumb {
+    font-size: 0.85em;
+    color: #656d76;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #d0d7de;
+  }
+  .breadcrumb a { color: #0969da; text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+  h1 { font-size: 2em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; }
+  h2 { font-size: 1.5em; border-bottom: 1px solid #d0d7de; padding-bottom: 0.3em; margin-top: 1.5em; }
+  h3 { font-size: 1.25em; margin-top: 1.5em; }
+  table { border-collapse: collapse; width: auto; margin: 16px 0; }
+  th, td { border: 1px solid #d0d7de; padding: 6px 13px; }
+  th { background: #f6f8fa; font-weight: 600; }
+  pre { background: #f6f8fa; border-radius: 6px; padding: 16px; overflow-x: auto; font-size: 0.9em; line-height: 1.45; }
+  code { font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace; font-size: 0.9em; }
+  :not(pre) > code { background: rgba(175,184,193,0.2); padding: 0.2em 0.4em; border-radius: 3px; }
+  blockquote { margin: 16px 0; padding: 0 1em; color: #636c76; border-left: 0.25em solid #d0d7de; }
+  img { max-width: 100%; }
+  a { color: #0969da; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  ul, ol { padding-left: 2em; }
+  li { margin: 4px 0; }
+  input[type="checkbox"] { margin-right: 0.5em; }
+  hr { border: none; border-top: 1px solid #d0d7de; margin: 24px 0; }
+  .mermaid { text-align: center; margin: 16px 0; }
+</style>
+</head><body>
+<div class="breadcrumb"><a href="/">Projects</a>${breadcrumb}</div>
+<div id="content">${htmlBody}</div>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+if (document.querySelector('.mermaid')) {
+  mermaid.initialize({ startOnLoad: true, theme: 'default' });
+}
+</script>
+</body></html>`;
+}
+
 const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent(req.url.split("?")[0]);
 
@@ -188,6 +272,13 @@ const server = http.createServer((req, res) => {
       }
       res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
       res.end(renderIndex(resolved, trailing));
+      return;
+    }
+
+    // Render Markdown as rich HTML
+    if (path.extname(resolved).toLowerCase() === ".md") {
+      res.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
+      res.end(renderMarkdown(resolved, urlPath));
       return;
     }
 
