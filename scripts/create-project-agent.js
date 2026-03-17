@@ -526,6 +526,14 @@ function syncWorkspace(projectId) {
   }
 }
 
+function ensureAcpxrcSymlink(projectRoot) {
+  const acpxrcSource = path.join(ROOT, ".acpxrc.json");
+  const acpxrcTarget = path.join(projectRoot, ".acpxrc.json");
+  if (!fs.existsSync(acpxrcTarget) && fs.existsSync(acpxrcSource)) {
+    fs.symlinkSync(acpxrcSource, acpxrcTarget);
+  }
+}
+
 function buildProjectPaths(projectId, explicitRoot) {
   const projectRoot = explicitRoot || path.join(DATA_ROOT, "projects", projectId);
   const runtimeRoot = path.join(projectRoot, ".runtime", "openclaw");
@@ -577,6 +585,7 @@ function buildDryRunPayload(fields) {
     actions: [
       `create ${projectRoot}/agent/ (including skills.json)`,
       `create ${projectRoot}/docs/`,
+      `symlink ${projectRoot}/.acpxrc.json -> ~/.openclaw/.acpxrc.json`,
       `create runtime ${runtimeRoot}/`,
       "update ops/project-registry.json",
       "update openclaw.json agents.list",
@@ -661,6 +670,7 @@ function main() {
 
   createProjectFiles(projectId, projectName, projectRoot);
   ensureProjectDocs(projectId, projectRoot);
+  ensureAcpxrcSymlink(projectRoot);
   ensureRuntimeDirs(runtimeRoot);
   updateRegistry(record);
   updateOpenClaw({

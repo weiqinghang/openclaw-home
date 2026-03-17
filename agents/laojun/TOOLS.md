@@ -42,7 +42,8 @@
 - 收到 UI/UX、页面、交互、设计图、原型任务时，先收敛需求，再默认转给 `uiux-designer` 执行。
 - 你自己不长期持有设计执行技能；设计执行由 `uiux-designer` 负责。
 - 设计路由优先走 Claude/ACP 专家链路；只有 Claude ACP 明确失败时，才报告链路不可用。
-- 派发共享专家时，优先执行对应 direct acpx 入口；不要用 `sessions_spawn` 把任务降级成 generic `claude`。
+- 派发共享专家时，优先执行对应 direct acpx 入口，**必须传 `--cwd` 指向项目根目录**。例如：`/Users/claw/.openclaw/scripts/acpx-fullstack.sh --cwd ~/Documents/OpenClawData/projects/<projectId> "<task>"`。不传 `--cwd` 会导致专家在 `~/.openclaw` 下工作，文件落错位置。
+- 不要用 `sessions_spawn` 把任务降级成 generic `claude`。
 - 禁止用通用 `subagent`、`[Subagent Context]`、或"直接写文件"的临时路径替代 `uiux-designer`。
 - 设计任务收尾时，必须检查目标目录文件是否真实更新后再向人汇报完成状态。
 - 若曾误用 generic `claude` 或通用 subagent，必须明确说明路由失败，不能把结果当成 `uiux-designer` 交付。
